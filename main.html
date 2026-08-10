@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aljabar Cinta — Belajar Bentuk Aljabar dan Memecahkan Masalah</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:ital,wght@0,400;0,500;0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --green-deep:#2E7D4F;
+  --green-soft:#8FD6A0;
+  --green-pale:#EAF7EC;
+  --blue-sky:#5FB6E5;
+  --blue-deep:#173B4C;
+  --cream:#FBF7EC;
+  --yellow:#FFD873;
+  --coral:#FF8F7A;
+  --coral-pale:#FFEDE9;
+  --ink:#1F3B33;
+  --line:#E3DFD1;
+  --white:#FFFFFF;
+  --shadow: 0 10px 30px -12px rgba(23,59,76,0.18);
+  --radius: 20px;
+  --radius-sm: 12px;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  font-family:'Nunito',sans-serif;
+  background:var(--cream);
+  color:var(--ink);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4,.display{
+  font-family:'Baloo 2',cursive;
+  color:var(--blue-deep);
+  margin:0;
+  line-height:1.15;
+}
+a{color:inherit;text-decoration:none;}
+button{font-family:inherit;cursor:pointer;}
+img{max-width:100%;display:block;}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px;}
+.badge{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:.78rem;font-weight:800;letter-spacing:.03em;
+  padding:6px 14px;border-radius:999px;
+  background:var(--green-pale);color:var(--green-deep);
+  border:1.5px solid var(--green-soft);
+}
+.badge.coral{background:var(--coral-pale);color:#C24A34;border-color:#FFC7B8;}
+.badge.blue{background:#E9F5FC;color:#1B5E82;border-color:#BFE3F5;}
+.btn{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:14px 26px;border-radius:999px;border:none;
+  font-weight:800;font-size:1rem;font-family:'Baloo 2',cursive;
+  transition:transform .15s ease, box-shadow .15s ease, background .15s ease;
+  box-shadow:0 8px 20px -8px rgba(46,125,79,.5);
+}
+.btn:focus-visible{outline:3px solid var(--blue-deep);outline-offset:3px;}
+.btn:active{transform:translateY(1px);}
+.btn-primary{background:var(--green-deep);color:#fff;}
+.btn-primary:hover{background:#256a42;transform:translateY(-2px);}
+.btn-outline{background:#fff;color:var(--blue-deep);border:2px solid var(--blue-deep);box-shadow:none;}
+.btn-outline:hover{background:var(--blue-deep);color:#fff;}
+.btn-coral{background:var(--coral);color:#fff;box-shadow:0 8px 20px -8px rgba(255,143,122,.6);}
+.btn-coral:hover{background:#f4735c;transform:translateY(-2px);}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+.btn-sm{padding:9px 16px;font-size:.88rem;}
+
+/* NAVBAR */
+#navbar{
+  position:sticky;top:0;z-index:100;
+  background:rgba(251,247,236,.92);backdrop-filter:blur(8px);
+  border-bottom:1.5px solid var(--line);
+  transition:box-shadow .2s ease;
+}
+#navbar.scrolled{box-shadow:0 4px 20px -8px rgba(23,59,76,.25);}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;max-width:1180px;margin:0 auto;}
+.logo{display:flex;align-items:center;gap:10px;font-family:'Baloo 2';font-weight:800;font-size:1.25rem;color:var(--blue-deep);}
+.logo-mark{
+  width:40px;height:40px;border-radius:12px;
+  background:linear-gradient(145deg,var(--green-deep),var(--green-soft));
+  display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.2rem;font-weight:800;
+  box-shadow:0 6px 14px -6px rgba(46,125,79,.6);
+  position:relative;
+}
+.logo-mark svg{width:24px;height:24px;}
+.nav-links{display:flex;gap:6px;align-items:center;}
+.nav-links button{
+  background:none;border:none;padding:10px 16px;border-radius:999px;
+  font-weight:700;color:var(--blue-deep);font-size:.96rem;
+  transition:background .15s, color .15s;
+}
+.nav-links button:hover,.nav-links button.active{background:var(--green-pale);color:var(--green-deep);}
+.nav-cta{display:flex;align-items:center;gap:10px;}
+.hamburger{display:none;background:none;border:none;padding:8px;}
+.hamburger span{display:block;width:24px;height:3px;background:var(--blue-deep);margin:5px 0;border-radius:3px;transition:.2s;}
+#mobileMenu{display:none;flex-direction:column;gap:4px;padding:10px 20px 18px;background:var(--cream);border-bottom:1.5px solid var(--line);}
+#mobileMenu.open{display:flex;}
+#mobileMenu button{text-align:left;background:none;border:none;padding:12px 10px;font-weight:700;color:var(--blue-deep);font-size:1rem;border-radius:10px;}
+#mobileMenu button:hover{background:var(--green-pale);}
+
+@media (max-width:880px){
+  .nav-links{display:none;}
+  .hamburger{display:block;}
+  .nav-cta .btn span.long{display:none;}
+}
+
+/* progress mini bar under nav */
+#progressStrip{height:5px;background:var(--line);position:relative;}
+#progressFill{height:100%;background:linear-gradient(90deg,var(--green-deep),var(--green-soft));width:0%;transition:width .4s ease;}
+
+/* SECTIONS */
+section{padding:88px 0;}
+.section-head{text-align:center;max-width:640px;margin:0 auto 48px;}
+.eyebrow{font-weight:800;color:var(--coral);letter-spacing:.06em;text-transform:uppercase;font-size:.82rem;}
+.section-head h2{font-size:2.1rem;margin-top:8px;}
+.section-head p{color:#4A5D57;margin-top:12px;font-size:1.05rem;}
+
+/* HERO */
+#hero{
+  padding:60px 0 90px;
+  background:
+    radial-gradient(circle at 85% 10%, rgba(255,216,115,.35), transparent 45%),
+    radial-gradient(circle at 8% 85%, rgba(95,182,229,.22), transparent 45%),
+    var(--cream);
+  position:relative;overflow:hidden;
+}
+.hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center;}
+.hero-copy h1{font-size:3.4rem;letter-spacing:-.01em;}
+.hero-tagline{font-size:1.25rem;font-weight:700;color:var(--green-deep);margin-top:14px;}
+.hero-sub{margin-top:8px;font-weight:800;color:var(--blue-deep);font-size:1rem;}
+.hero-desc{margin-top:18px;color:#3E534C;font-size:1.05rem;max-width:480px;}
+.hero-actions{display:flex;gap:14px;margin-top:30px;flex-wrap:wrap;}
+.hero-badges{display:flex;gap:10px;margin-top:26px;flex-wrap:wrap;}
+.hero-visual{position:relative;}
+.hero-illustration{
+  background:linear-gradient(160deg,#DCF3E1,#E8F6FB);
+  border-radius:28px;padding:34px;position:relative;
+  box-shadow:var(--shadow);
+  border:2px solid #fff;
+}
+.floaty{position:absolute;animation:float 5s ease-in-out infinite;}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.leaf1{top:-18px;left:-18px;font-size:2.4rem;animation-delay:0s;}
+.leaf2{bottom:-14px;right:-10px;font-size:2rem;animation-delay:1.2s;}
+.heart-float{top:10px;right:20px;font-size:1.6rem;animation-delay:.6s;}
+
+@media (max-width:880px){
+  .hero-grid{grid-template-columns:1fr;}
+  .hero-copy h1{font-size:2.4rem;}
+}
+
+/* VALUE CARDS (cinta lingkungan) */
+.value-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+.value-card{
+  background:#fff;border-radius:var(--radius);padding:30px 24px;text-align:center;
+  border:1.5px solid var(--line);transition:transform .2s ease, box-shadow .2s ease;
+}
+.value-card:hover{transform:translateY(-6px);box-shadow:var(--shadow);}
+.value-icon{font-size:2.4rem;margin-bottom:14px;}
+.value-card h3{font-size:1.15rem;}
+.value-card p{color:#5A6B65;font-size:.95rem;margin-top:8px;}
+
+/* TUJUAN CARDS */
+.goal-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:18px;}
+.goal-card{
+  background:#fff;border-radius:var(--radius-sm);padding:22px 18px;
+  border:1.5px solid var(--line);position:relative;overflow:hidden;
+  transition:transform .2s ease,box-shadow .2s;
+}
+.goal-card:hover{transform:translateY(-5px);box-shadow:var(--shadow);border-color:var(--green-soft);}
+.goal-num{font-family:'Baloo 2';font-size:1.6rem;color:var(--green-soft);font-weight:800;}
+.goal-icon{font-size:1.8rem;margin:8px 0 10px;}
+.goal-card p{font-size:.88rem;color:#3E534C;}
+@media (max-width:980px){.goal-grid{grid-template-columns:repeat(2,1fr);} .value-grid{grid-template-columns:1fr;}}
+@media (min-width:981px) and (max-width:1180px){.goal-grid{grid-template-columns:repeat(3,1fr);}}
+
+/* PETA KONSEP */
+#peta{background:var(--white);}
+.peta-diagram{display:flex;flex-direction:column;align-items:center;gap:0;margin-bottom:10px;}
+.peta-root{
+  background:var(--blue-deep);color:#fff;padding:16px 34px;border-radius:16px;
+  font-family:'Baloo 2';font-weight:700;font-size:1.15rem;box-shadow:var(--shadow);
+}
+.peta-line{width:2px;height:34px;background:var(--line);}
+.peta-branches{display:flex;gap:6px;width:100%;justify-content:center;position:relative;margin-top:0;}
+.peta-nodes{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;margin-top:8px;}
+.peta-node{
+  background:var(--green-pale);border:2px solid var(--green-soft);border-radius:var(--radius);
+  padding:26px 18px;text-align:center;cursor:pointer;
+  transition:transform .2s, box-shadow .2s, background .2s;
+}
+.peta-node:hover,.peta-node:focus-visible{transform:translateY(-6px) scale(1.02);box-shadow:var(--shadow);background:#fff;outline:none;}
+.peta-node .icon{font-size:2.1rem;}
+.peta-node h4{font-size:1.02rem;margin-top:10px;}
+.peta-node ul{list-style:none;padding:0;margin:10px 0 0;font-size:.83rem;color:#4A5D57;text-align:left;}
+.peta-node ul li{padding:2px 0;}
+.peta-node ul li::before{content:"• ";color:var(--green-deep);}
+.peta-node .go{margin-top:14px;font-weight:800;color:var(--green-deep);font-size:.85rem;}
+@media (max-width:900px){.peta-nodes{grid-template-columns:1fr 1fr;}}
+@media (max-width:560px){.peta-nodes{grid-template-columns:1fr;}}
+
+/* MISI cards */
+.misi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;}
+.misi-card{
+  background:#fff;border-radius:var(--radius);border:1.5px solid var(--line);
+  padding:26px 22px;display:flex;flex-direction:column;gap:12px;
+  transition:transform .2s,box-shadow .2s;position:relative;
+}
+.misi-card:hover{transform:translateY(-6px);box-shadow:var(--shadow);}
+.misi-top{display:flex;justify-content:space-between;align-items:flex-start;}
+.misi-num{font-family:'Baloo 2';font-weight:800;color:var(--green-soft);font-size:1.4rem;}
+.misi-icon{font-size:2rem;}
+.misi-card h3{font-size:1.1rem;}
+.misi-card p{color:#5A6B65;font-size:.92rem;flex:1;}
+.mini-progress{height:8px;background:var(--green-pale);border-radius:999px;overflow:hidden;}
+.mini-progress-fill{height:100%;background:var(--green-deep);border-radius:999px;transition:width .3s;}
+.misi-status{font-size:.78rem;font-weight:800;color:var(--green-deep);}
+@media (max-width:980px){.misi-grid{grid-template-columns:1fr 1fr;}}
+@media (max-width:560px){.misi-grid{grid-template-columns:1fr;}}
+
+/* GLOSARIUM accordion */
+.glos-list{display:flex;flex-direction:column;gap:10px;max-width:820px;margin:0 auto;}
+.glos-item{background:#fff;border:1.5px solid var(--line);border-radius:14px;overflow:hidden;}
+.glos-q{
+  width:100%;text-align:left;background:none;border:none;padding:16px 20px;
+  display:flex;justify-content:space-between;align-items:center;font-weight:800;color:var(--blue-deep);font-size:1rem;
+}
+.glos-q:hover{background:var(--green-pale);}
+.glos-a{max-height:0;overflow:hidden;transition:max-height .25s ease;padding:0 20px;color:#4A5D57;}
+.glos-item.open .glos-a{max-height:200px;padding:0 20px 18px;}
+.glos-item.open .glos-q{color:var(--green-deep);}
+.chev{transition:transform .2s;}
+.glos-item.open .chev{transform:rotate(180deg);}
+
+/* FOOTER */
+footer{background:var(--blue-deep);color:#DCE9EC;padding:56px 0 26px;margin-top:40px;}
+.footer-top{display:flex;justify-content:space-between;flex-wrap:wrap;gap:30px;}
+footer h3{color:#fff;}
+footer .foot-tag{color:#A9C2C9;margin-top:8px;max-width:320px;}
+.foot-nav{display:flex;gap:22px;flex-wrap:wrap;}
+.foot-nav a,.foot-nav button{background:none;border:none;color:#DCE9EC;font-weight:700;font-family:inherit;font-size:.95rem;}
+.foot-nav button:hover{color:var(--yellow);}
+.foot-msg{margin-top:30px;padding-top:24px;border-top:1px solid rgba(255,255,255,.15);text-align:center;color:#A9C2C9;font-style:italic;}
+.foot-copy{text-align:center;margin-top:14px;color:#7E97A0;font-size:.85rem;}
+
+/* PAGE HEADER for inner pages */
+.page-hero{
+  padding:44px 0 40px;background:linear-gradient(160deg,var(--green-pale),var(--cream));
+  border-bottom:1.5px solid var(--line);
+}
+.breadcrumb{display:flex;gap:8px;align-items:center;font-size:.88rem;color:#5A6B65;margin-bottom:16px;flex-wrap:wrap;}
+.breadcrumb button{background:none;border:none;font-weight:800;color:var(--green-deep);font-family:inherit;}
+.page-hero h1{font-size:2.1rem;}
+.page-hero .sub{color:#3E534C;margin-top:8px;max-width:640px;}
+.page-badges{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;}
+.back-row{margin-top:20px;}
+
+/* CARDS generic */
+.card{background:#fff;border:1.5px solid var(--line);border-radius:var(--radius);padding:26px;}
+.card + .card{margin-top:20px;}
+.card h3{font-size:1.2rem;margin-bottom:10px;}
+.card h4{font-size:1.02rem;color:var(--green-deep);margin-bottom:8px;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+@media (max-width:760px){.two-col{grid-template-columns:1fr;}}
+
+.formula{
+  background:var(--blue-deep);color:#fff;border-radius:14px;padding:16px 22px;
+  font-family:'Baloo 2';font-size:1.15rem;text-align:center;margin:14px 0;letter-spacing:.02em;
+}
+.formula.light{background:var(--green-pale);color:var(--blue-deep);border:1.5px dashed var(--green-soft);}
+
+table.matter{width:100%;border-collapse:collapse;margin:14px 0;font-size:.92rem;}
+table.matter th,table.matter td{border:1px solid var(--line);padding:10px 12px;text-align:center;}
+table.matter th{background:var(--green-pale);color:var(--blue-deep);}
+
+.field-label{font-weight:800;color:var(--blue-deep);font-size:.92rem;margin:14px 0 6px;display:block;}
+input[type=text],input[type=number],textarea{
+  width:100%;padding:12px 14px;border-radius:10px;border:1.5px solid var(--line);
+  font-family:inherit;font-size:1rem;background:#FCFBF7;
+}
+textarea{min-height:80px;resize:vertical;}
+input:focus,textarea:focus{outline:3px solid var(--blue-sky);outline-offset:1px;border-color:var(--blue-sky);}
+.mc-options{display:flex;flex-direction:column;gap:8px;margin-top:6px;}
+.mc-option{display:flex;align-items:center;gap:10px;padding:10px 14px;border:1.5px solid var(--line);border-radius:10px;cursor:pointer;}
+.mc-option:hover{border-color:var(--blue-sky);}
+.mc-option input{width:18px;height:18px;}
+
+.feedback{
+  margin-top:14px;padding:14px 18px;border-radius:12px;font-weight:700;display:none;align-items:center;gap:10px;
+}
+.feedback.show{display:flex;}
+.feedback.ok{background:var(--green-pale);color:var(--green-deep);border:1.5px solid var(--green-soft);}
+.feedback.bad{background:var(--coral-pale);color:#C24A34;border:1.5px solid #FFC7B8;}
+
+.hint-box{margin-top:12px;background:#FFF7E0;border:1.5px solid var(--yellow);border-radius:12px;padding:12px 16px;color:#6B5100;font-weight:600;display:none;}
+.hint-box.show{display:block;}
+
+.step-actions{display:flex;gap:12px;margin-top:20px;flex-wrap:wrap;}
+
+/* stepper tracker (pemodelan / sifat) */
+.tracker{display:flex;gap:6px;flex-wrap:wrap;margin:22px 0 6px;}
+.tracker .dot{
+  flex:1;min-width:90px;text-align:center;padding:10px 6px;border-radius:10px;font-size:.75rem;font-weight:800;
+  background:#fff;border:1.5px solid var(--line);color:#8A9A94;
+}
+.tracker .dot.done{background:var(--green-deep);color:#fff;border-color:var(--green-deep);}
+.tracker .dot.current{background:var(--yellow);color:#6B5100;border-color:var(--yellow);}
+
+.check-row{display:flex;align-items:flex-start;gap:10px;padding:8px 0;}
+.check-row input{width:20px;height:20px;margin-top:2px;}
+
+.pembahasan{
+  margin-top:14px;background:var(--green-pale);border-radius:12px;padding:16px 18px;display:none;
+}
+.pembahasan.show{display:block;}
+
+.pill-select{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;}
+.pill-select label{
+  border:1.5px solid var(--line);border-radius:999px;padding:8px 16px;font-weight:700;font-size:.88rem;
+  display:flex;align-items:center;gap:6px;cursor:pointer;
+}
+.pill-select input{width:16px;height:16px;}
+
+.toast{
+  position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--blue-deep);color:#fff;padding:14px 26px;border-radius:999px;
+  font-weight:700;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:.3s ease;z-index:999;
+  display:flex;align-items:center;gap:10px;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+.tooltip-wrap{position:relative;display:inline-flex;}
+.tooltip-wrap .tip{
+  visibility:hidden;opacity:0;position:absolute;bottom:130%;left:50%;transform:translateX(-50%);
+  background:var(--blue-deep);color:#fff;padding:6px 10px;border-radius:8px;font-size:.75rem;white-space:nowrap;
+  transition:.15s;
+}
+.tooltip-wrap:hover .tip{visibility:visible;opacity:1;}
+
+/* profil */
+.profil-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:20px;}
+.profil-card{background:#fff;border-radius:var(--radius);border:1.5px solid var(--line);padding:22px 18px;text-align:center;transition:transform .2s;}
+.profil-card:hover{transform:translateY(-5px);box-shadow:var(--shadow);}
+.profil-photo{
+  width:88px;height:88px;border-radius:50%;margin:0 auto 14px;
+  background:linear-gradient(160deg,var(--green-soft),var(--blue-sky));
+  display:flex;align-items:center;justify-content:center;color:#fff;font-size:2rem;
+}
+.profil-card h4{font-size:1rem;}
+.profil-card .role{color:var(--green-deep);font-weight:800;font-size:.82rem;margin:4px 0 8px;}
+.profil-card p{font-size:.85rem;color:#5A6B65;}
+@media (max-width:980px){.profil-grid{grid-template-columns:repeat(3,1fr);}}
+@media (max-width:620px){.profil-grid{grid-template-columns:1fr 1fr;}}
+
+/* problem block for pemodelan */
+.story-box{background:var(--green-pale);border-radius:14px;padding:20px 22px;border:1.5px dashed var(--green-soft);font-size:.98rem;color:#2F4A41;}
+.story-box p{margin:0 0 10px;}
+.story-box p:last-child{margin-bottom:0;}
+.task-item{border-top:1px solid var(--line);padding:16px 0;}
+.task-item:first-child{border-top:none;}
+.task-num{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--blue-deep);color:#fff;font-size:.8rem;font-weight:800;margin-right:8px;}
+
+/* animations */
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease, transform .5s ease;}
+.fade-in.visible{opacity:1;transform:translateY(0);}
+.bounce-check{display:inline-block;animation:pop .4s ease;}
+@keyframes pop{0%{transform:scale(0);}70%{transform:scale(1.25);}100%{transform:scale(1);}}
+.done-anim{text-align:center;padding:26px 0;}
+.done-anim .big-emoji{font-size:3.5rem;animation:pop .5s ease;}
+
+.skip-link{position:absolute;left:-999px;top:0;background:var(--blue-deep);color:#fff;padding:10px 16px;border-radius:8px;z-index:1000;}
+.skip-link:focus{left:16px;top:16px;}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.001ms !important;transition-duration:.001ms !important;}
+}
+</style>
+</head>
+<body>
+
+<a href="#main" class="skip-link">Lompat ke konten</a>
+
+<nav id="navbar">
+  <div class="nav-inner">
+    <div class="logo" role="button" tabindex="0" onclick="go('beranda')">
+      <span class="logo-mark">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 3C9 7 6 9 6 13a6 6 0 0012 0c0-4-3-6-6-10z" fill="#fff" opacity="0.95"/>
+          <path d="M9 20c1.2-3 2-6 3-11" stroke="#2E7D4F" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+      </span>
+      Aljabar Cinta
+    </div>
+    <div class="nav-links" id="navLinks">
+      <button data-page="beranda" onclick="go('beranda')">Beranda</button>
+      <button data-page="materi" onclick="go('materi')">Materi &amp; Misi</button>
+      <button data-page="profil" onclick="go('profil')">Profil Pengembang</button>
+    </div>
+    <div class="nav-cta">
+      <button class="btn btn-primary btn-sm" onclick="go('materi')">✨ <span class="long">Mulai Belajar</span></button>
+      <button class="hamburger" onclick="toggleMobileMenu()" aria-label="Buka menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+  <div id="mobileMenu">
+    <button onclick="go('beranda');toggleMobileMenu()">🏠 Beranda</button>
+    <button onclick="go('materi');toggleMobileMenu()">📘 Materi &amp; Misi</button>
+    <button onclick="go('profil');toggleMobileMenu()">👩‍🏫 Profil Pengembang</button>
+  </div>
+  <div id="progressStrip"><div id="progressFill"></div></div>
+</nav>
+
+<main id="main"></main>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-top">
+      <div>
+        <h3>Aljabar Cinta</h3>
+        <p class="foot-tag">Belajar aljabar dengan cinta, logika, dan kepedulian.</p>
+      </div>
+      <div class="foot-nav">
+        <button onclick="go('beranda')">Beranda</button>
+        <button onclick="go('materi')">Materi &amp; Misi</button>
+        <button onclick="go('profil')">Profil Pengembang</button>
+      </div>
+    </div>
+    <div class="foot-msg">"Matematika membantu kita memahami masalah, dan kepedulian membantu kita membuat perubahan."</div>
+    <div class="foot-copy">© 2026 Aljabar Cinta</div>
+  </div>
+</footer>
+
+<div class="toast" id="toast">🌱 <span id="toastText">Progress tersimpan!</span></div>
+
+<script>
+/* ============ PROGRESS / STORAGE ============ */
+const STORE_KEY = "aljabarcinta_progress_v1";
+function loadProgress(){
+  try{ return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; }catch(e){ return {}; }
+}
+function saveProgress(p){ localStorage.setItem(STORE_KEY, JSON.stringify(p)); }
+let progress = loadProgress();
+
+const MISI_LIST = ["unsur","operasi","sifat","pemodelan"];
+function setMisiStep(misi, stepKey, value){
+  progress[misi] = progress[misi] || {};
+  progress[misi][stepKey] = value;
+  saveProgress(progress);
+  updateGlobalProgress();
+}
+function getMisiPercent(misi, totalSteps){
+  const done = progress[misi] ? Object.values(progress[misi]).filter(Boolean).length : 0;
+  return Math.round((done/totalSteps)*100);
+}
+const MISI_TOTALS = { unsur:2, operasi:3, sifat:4, pemodelan:5 };
+function updateGlobalProgress(){
+  let totalDone = 0, totalAll = 0;
+  MISI_LIST.forEach(m=>{
+    const t = MISI_TOTALS[m];
+    totalAll += t;
+    totalDone += progress[m] ? Object.values(progress[m]).filter(Boolean).length : 0;
+  });
+  const pct = totalAll? Math.round((totalDone/totalAll)*100) : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+function showToast(msg){
+  const t = document.getElementById('toast');
+  document.getElementById('toastText').textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(()=>t.classList.remove('show'), 2600);
+}
+
+/* ============ NAV ============ */
+function toggleMobileMenu(){ document.getElementById('mobileMenu').classList.toggle('open'); }
+window.addEventListener('scroll', ()=>{
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY>10);
+});
+
+function go(page, sub){
+  location.hash = sub ? `${page}/${sub}` : page;
+}
+window.addEventListener('hashchange', render);
+
+function setActiveNav(page){
+  document.querySelectorAll('#navLinks button').forEach(b=>{
+    b.classList.toggle('active', b.dataset.page===page);
+  });
+}
+
+/* ============ CONTENT DATA ============ */
+const GLOSARIUM = [
+  ["Variabel","Huruf atau simbol yang mewakili suatu kuantitas tertentu, yang nilainya dapat berubah-ubah atau belum diketahui. Contoh: pada 3n − 1, huruf n adalah variabel."],
+  ["Koefisien","Angka yang menjadi faktor pengali suatu variabel. Contoh: pada 3n, angka 3 adalah koefisien dari n."],
+  ["Konstanta","Bilangan yang nilainya tetap dan tidak terikat pada variabel apa pun. Contoh: pada 3n − 1, angka −1 adalah konstanta."],
+  ["Suku","Bilangan, variabel, atau hasil kali bilangan dan variabel yang dipisahkan oleh operasi penjumlahan atau pengurangan."],
+  ["Suku Sejenis","Suku-suku yang memiliki variabel dan pangkat yang sama, sehingga dapat dijumlahkan atau dikurangkan. Contoh: 3a dan 5a sejenis, tetapi 3a dan 5b tidak."],
+  ["Bentuk Aljabar Ekuivalen","Dua bentuk aljabar berbeda yang selalu menghasilkan nilai sama untuk nilai variabel berapa pun, meski ditulis dengan cara berbeda."],
+  ["Komutatif","Sifat yang menyatakan bahwa menukar urutan suku tidak mengubah hasil operasi. Contoh: a + b = b + a."],
+  ["Asosiatif","Sifat yang menyatakan bahwa mengubah pengelompokan suku tidak mengubah hasil operasi. Contoh: (a+b)+c = a+(b+c)."],
+  ["Distributif","Sifat perkalian yang menyebar ke setiap suku di dalam tanda kurung. Contoh: a(b+c) = ab + ac."],
+  ["Model Aljabar","Bentuk aljabar yang dibuat untuk mewakili suatu masalah atau situasi nyata sehingga dapat dihitung dan dianalisis."]
+];
+
+const PENGEMBANG = [
+  {n:"Pengembang 1", r:"Pengembang Materi"},
+  {n:"Pengembang 2", r:"Pengembang Materi"},
+  {n:"Pengembang 3", r:"Desainer & UI/UX"},
+  {n:"Pengembang 4", r:"Pengembang Front-End"},
+  {n:"Pengembang 5", r:"Editor & Reviewer"}
+];
+
+const PEMODELAN = [
+  {
+    id:"p1", emoji:"♻️", title:"Poin Bank Sampah Kelas VII",
+    story:[
+      "Setiap Jumat pagi, siswa kelas VII membawa sampah yang sudah dipilah dari rumah untuk disetorkan ke bank sampah sekolah. Sampah yang terkumpul kemudian ditukar dengan poin untuk kas kelas.",
+      "Pada Jumat ini, Kelompok Melati memperoleh sejumlah poin dari sampah plastik yang mereka kumpulkan. Selain itu, mereka memperoleh 4 poin tambahan dari sampah kertas.",
+      "Kelompok Anggrek berhasil mengumpulkan sampah plastik lebih banyak. Poin dari sampah plastik mereka adalah dua kali poin sampah plastik Kelompok Melati. Mereka juga memperoleh 3 poin tambahan dari sampah kertas.",
+      "Ketua kelas ingin mengetahui jumlah seluruh poin yang diperoleh kedua kelompok, tetapi jumlah poin sampah plastik Kelompok Melati belum diketahui."
+    ],
+    tasks:[
+      "Tentukan sebuah variabel untuk menyatakan poin sampah plastik Kelompok Melati.",
+      "Tuliskan model aljabar untuk jumlah poin Kelompok Melati.",
+      "Tuliskan model aljabar untuk jumlah poin Kelompok Anggrek.",
+      "Buat model aljabar untuk jumlah poin kedua kelompok.",
+      "Sederhanakan model tersebut menggunakan operasi dan sifat aljabar yang sudah kalian pelajari.",
+      "Tentukan variabel, koefisien, konstanta, dan suku pada bentuk akhir.",
+      "Jelaskan arti bentuk aljabar yang kalian peroleh dalam cerita tersebut."
+    ]
+  },
+  {
+    id:"p2", emoji:"🌳", title:"Bibit untuk Taman Depan Kelas",
+    story:[
+      "Siswa kelas VII mendapat tugas merawat taman di depan ruang kelas. Agar taman lebih hijau, setiap kelompok diminta membawa bibit tanaman dari rumah.",
+      "Setiap kelompok membawa sejumlah bibit tanaman buah yang sama dan 3 bibit bunga. Hari itu terdapat 4 kelompok yang membawa bibit sesuai kesepakatan.",
+      "Sebelum penanaman dimulai, siswa memeriksa kondisi semua bibit. Ternyata 2 bibit bunga rusak karena batangnya patah sehingga tidak dapat ditanam.",
+      "Wali kelas meminta siswa menentukan berapa banyak bibit yang benar-benar dapat ditanam, meskipun jumlah bibit tanaman buah yang dibawa setiap kelompok belum diketahui."
+    ],
+    tasks:[
+      "Tentukan variabel untuk menyatakan banyak bibit tanaman buah yang dibawa satu kelompok.",
+      "Tuliskan model jumlah bibit yang dibawa satu kelompok.",
+      "Tuliskan model jumlah bibit yang dibawa oleh empat kelompok.",
+      "Gunakan sifat aljabar yang sesuai untuk mengubah model tersebut ke bentuk tanpa tanda kurung.",
+      "Masukkan informasi tentang 2 bibit yang rusak.",
+      "Tentukan model aljabar jumlah bibit yang dapat ditanam.",
+      "Jelaskan arti setiap suku pada model akhir yang kalian peroleh."
+    ]
+  },
+  {
+    id:"p3", emoji:"💧", title:"Tantangan Hemat Air Saat Piket Kelas",
+    story:[
+      "Setelah pelajaran selesai, setiap kelas melakukan piket. Air digunakan untuk mengepel lantai dan menyiram tanaman di depan kelas.",
+      "Guru memperhatikan bahwa penggunaan air cukup banyak. Oleh karena itu, tiga kelas VII mengikuti program \"Setiap Tetes Berarti\".",
+      "Sebelum program dimulai, setiap kelas menggunakan sejumlah liter air untuk mengepel lantai dan 6 liter air tambahan untuk menyiram tanaman.",
+      "Setelah berdiskusi, siswa sepakat menggunakan ember takaran dan mematikan keran ketika tidak digunakan. Dengan kebiasaan baru tersebut, setiap kelas berhasil menghemat 2 liter air setiap hari.",
+      "Guru ingin mengetahui model penggunaan air dari ketiga kelas sebelum dan setelah program penghematan."
+    ],
+    tasks:[
+      "Gunakan sebuah variabel untuk menyatakan banyak air yang digunakan satu kelas untuk mengepel lantai.",
+      "Tuliskan model penggunaan air satu kelas sebelum program hemat air.",
+      "Tuliskan model penggunaan air tiga kelas sebelum penghematan.",
+      "Tentukan total air yang berhasil dihemat oleh ketiga kelas.",
+      "Buat model penggunaan air setelah penghematan.",
+      "Sederhanakan model tersebut menggunakan sifat distributif.",
+      "Temukan dua bentuk aljabar berbeda yang menyatakan penggunaan air yang sama.",
+      "Jelaskan mengapa kedua bentuk tersebut ekuivalen."
+    ]
+  },
+  {
+    id:"p4", emoji:"🌱", title:"Pot Tanaman dari Botol Plastik Bekas",
+    story:[
+      "Untuk mengurangi botol plastik yang dibuang, siswa kelas VII membuat pot tanaman dari botol bekas. Pot-pot tersebut akan digunakan untuk menanam tanaman obat di sekitar sekolah.",
+      "Kelas VII-A telah membuat sejumlah pot. Hasil kerja mereka terdiri atas dua kelompok pot dengan jumlah yang sama dan 6 pot tambahan.",
+      "Kelas VII-B juga membuat pot. Jumlah pot mereka terdiri atas satu kelompok dengan jumlah yang sama seperti kelompok pot VII-A dan 3 pot tambahan.",
+      "Semua pot dari kedua kelas akan digabungkan. Setelah itu, pot tersebut akan dibagikan sama banyak kepada tiga kelompok penghijauan sekolah.",
+      "Panitia ingin mengetahui berapa banyak pot yang akan diterima setiap kelompok penghijauan tanpa harus mengetahui terlebih dahulu jumlah pasti pot dalam satu kelompok."
+    ],
+    tasks:[
+      "Tentukan variabel untuk menyatakan banyak pot dalam satu kelompok.",
+      "Buat model aljabar jumlah pot yang dibuat kelas VII-A.",
+      "Buat model aljabar jumlah pot yang dibuat kelas VII-B.",
+      "Tentukan model jumlah seluruh pot.",
+      "Gunakan sifat komutatif dan asosiatif untuk mengelompokkan suku-suku sejenis.",
+      "Sederhanakan bentuk aljabar tersebut.",
+      "Karena pot dibagi sama rata kepada tiga kelompok penghijauan, tentukan model banyak pot yang diterima setiap kelompok.",
+      "Jelaskan arti hasil akhir dalam konteks kegiatan tersebut."
+    ]
+  },
+  {
+    id:"p5", emoji:"🌍", title:"Pekan Bebas Plastik di Kantin Sekolah",
+    story:[
+      "OSIS mengadakan program \"Pekan Bebas Plastik\" untuk mengurangi penggunaan kantong dan kemasan plastik sekali pakai di kantin.",
+      "Tiga kelas VII mengikuti tantangan tersebut.",
+      "Pada hari Senin, setiap kelas berhasil mengurangi penggunaan plastik sebanyak dua kelompok dengan jumlah yang sama ditambah 4 kemasan plastik.",
+      "Pada hari Selasa, setiap kelas kembali mengurangi penggunaan plastik. Kali ini jumlahnya adalah satu kelompok dengan jumlah yang sama seperti sebelumnya ditambah 2 kemasan plastik.",
+      "Pengurus OSIS ingin mengetahui total pengurangan penggunaan plastik dari ketiga kelas selama dua hari, dan rata-rata kontribusi satu kelas. Jumlah plastik dalam satu kelompok belum diketahui."
+    ],
+    tasks:[
+      "Tentukan variabel untuk menyatakan banyak plastik dalam satu kelompok.",
+      "Tuliskan model pengurangan plastik satu kelas pada hari Senin.",
+      "Tuliskan model pengurangan plastik tiga kelas pada hari Senin.",
+      "Tuliskan model pengurangan plastik satu kelas pada hari Selasa.",
+      "Tuliskan model pengurangan plastik tiga kelas pada hari Selasa.",
+      "Gabungkan hasil kedua hari tersebut.",
+      "Gunakan sifat distributif, komutatif, dan asosiatif untuk menyederhanakan model.",
+      "Tentukan model rata-rata kontribusi satu kelas.",
+      "Jelaskan makna model akhir yang kalian peroleh."
+    ]
+  }
+];
+
+const POLA_STEPS = ["Pahami Situasi","Tentukan Variabel","Buat Model","Operasikan Model","Gunakan Sifat Aljabar","Sederhanakan","Tafsirkan Kembali"];
+
+/* ============ RENDER ROUTER ============ */
+function render(){
+  const hash = location.hash.replace('#','') || 'beranda';
+  const [page, sub] = hash.split('/');
+  const main = document.getElementById('main');
+  window.scrollTo({top:0, behavior:'instant' in window ? 'instant':'auto'});
+  setActiveNav(page);
+  updateGlobalProgress();
+
+  if(page==='beranda') main.innerHTML = pageBeranda();
+  else if(page==='materi') main.innerHTML = pageMateri();
+  else if(page==='misi-unsur') main.innerHTML = pageUnsur();
+  else if(page==='misi-operasi') main.innerHTML = pageOperasi();
+  else if(page==='misi-sifat') main.innerHTML = pageSifat(sub? parseInt(sub):1);
+  else if(page==='misi-pemodelan') main.innerHTML = pagePemodelan(sub || null);
+  else if(page==='profil') main.innerHTML = pageProfil();
+  else main.innerHTML = pageBeranda();
+
+  afterRender(page, sub);
+  observeFadeIns();
+}
+
+function observeFadeIns(){
+  const els = document.querySelectorAll('.fade-in');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target);} });
+  },{threshold:.12});
+  els.forEach(el=>io.observe(el));
+}
+
+/* ============ PAGE: BERANDA ============ */
+function pageBeranda(){
+  return `
+  <section id="hero">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <span class="badge coral">💚 Kurikulum Berbasis Cinta · Cinta Lingkungan</span>
+        <h1>ALJABAR CINTA</h1>
+        <div class="hero-tagline">"Belajar Bentuk Aljabar dan Memecahkan Masalah"</div>
+        <div class="hero-sub">Untuk SMP/MTs Kelas VII</div>
+        <p class="hero-desc">Belajar aljabar melalui masalah nyata di sekitar kita, dengan semangat mencintai lingkungan.</p>
+        <div class="hero-actions">
+          <button class="btn btn-primary" onclick="go('materi')">🚀 Mulai Belajar</button>
+          <button class="btn btn-outline" onclick="document.getElementById('peta').scrollIntoView({behavior:'smooth'})">🗺️ Lihat Peta Konsep</button>
+        </div>
+        <div class="hero-badges">
+          <span class="badge">Kelas VII</span>
+          <span class="badge blue">4 Misi Interaktif</span>
+          <span class="badge coral">Progress Tersimpan Otomatis</span>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="hero-illustration">
+          <div class="floaty leaf1">🍃</div>
+          <div class="floaty leaf2">🌿</div>
+          <div class="floaty heart-float">💚</div>
+          <div style="display:flex;gap:14px;align-items:flex-end;justify-content:center;font-size:5rem;">
+            <span>🧑‍🎓</span><span>📖</span><span>👧🏻</span>
+          </div>
+          <div style="text-align:center;margin-top:6px;font-size:1.8rem;">✏️ 𝑥 + 𝑦 🌍 ♻️ 🪴</div>
+          <div style="margin-top:16px;background:#fff;border-radius:14px;padding:14px 18px;font-family:'Baloo 2';color:var(--blue-deep);text-align:center;box-shadow:var(--shadow);">
+            3n − 1 = ... 🌱
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="section-head fade-in">
+        <span class="eyebrow">Nilai Cinta Lingkungan</span>
+        <h2>Belajar matematika sambil peduli bumi</h2>
+        <p>Setiap materi aljabar di sini dibungkus dengan cerita kepedulian terhadap lingkungan sekolah kita.</p>
+      </div>
+      <div class="value-grid">
+        <div class="value-card fade-in"><div class="value-icon">🌱</div><h3>Peduli Lingkungan</h3><p>Belajar lewat kegiatan penghijauan, pilah sampah, dan hemat air.</p></div>
+        <div class="value-card fade-in"><div class="value-icon">🧠</div><h3>Berpikir Logis</h3><p>Melatih kemampuan memodelkan dan menyelesaikan masalah dengan aljabar.</p></div>
+        <div class="value-card fade-in"><div class="value-icon">🤝</div><h3>Bekerja Sama</h3><p>Aktivitas dan misi dirancang agar bisa dikerjakan bersama teman sekelompok.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section style="background:var(--white);">
+    <div class="wrap">
+      <div class="section-head fade-in">
+        <span class="eyebrow">Tujuan Belajar</span>
+        <h2>Apa yang akan kamu kuasai</h2>
+      </div>
+      <div class="goal-grid">
+        <div class="goal-card fade-in"><div class="goal-num">01</div><div class="goal-icon">🔤</div><p>Menyatakan kuantitas yang berubah-ubah dan tidak diketahui dengan variabel.</p></div>
+        <div class="goal-card fade-in"><div class="goal-num">02</div><div class="goal-icon">🧩</div><p>Mengidentifikasi konstanta, koefisien, variabel, dan suku pada bentuk aljabar.</p></div>
+        <div class="goal-card fade-in"><div class="goal-num">03</div><div class="goal-icon">🔍</div><p>Menginterpretasikan nilai bentuk aljabar dari substitusi nilai ke variabel.</p></div>
+        <div class="goal-card fade-in"><div class="goal-num">04</div><div class="goal-icon">🔁</div><p>Mengubah bentuk aljabar ke bentuk ekuivalen dengan sifat dan operasi aljabar.</p></div>
+        <div class="goal-card fade-in"><div class="goal-num">05</div><div class="goal-icon">🌍</div><p>Memodelkan permasalahan menjadi bentuk aljabar dan menyelesaikannya.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="peta">
+    <div class="wrap">
+      <div class="section-head fade-in">
+        <span class="eyebrow">Peta Konsep</span>
+        <h2>PETA KONSEP ALJABAR</h2>
+        <p>Klik salah satu bagian untuk langsung memulai misi pembelajarannya.</p>
+      </div>
+      <div class="peta-diagram fade-in">
+        <div class="peta-root">BENTUK ALJABAR</div>
+        <div class="peta-line"></div>
+      </div>
+      <div class="peta-nodes fade-in">
+        <div class="peta-node" tabindex="0" onclick="go('misi-unsur')" onkeypress="if(event.key==='Enter')go('misi-unsur')">
+          <div class="icon">🌱</div>
+          <h4>Unsur Aljabar</h4>
+          <ul><li>Variabel</li><li>Koefisien</li><li>Konstanta</li><li>Suku</li></ul>
+          <div class="go">Mulai Misi →</div>
+        </div>
+        <div class="peta-node" tabindex="0" onclick="go('misi-operasi')" onkeypress="if(event.key==='Enter')go('misi-operasi')">
+          <div class="icon">♻️</div>
+          <h4>Operasi Aljabar</h4>
+          <ul><li>Penjumlahan</li><li>Pengurangan</li><li>Perkalian</li><li>Pembagian</li></ul>
+          <div class="go">Mulai Misi →</div>
+        </div>
+        <div class="peta-node" tabindex="0" onclick="go('misi-sifat','1')" onkeypress="if(event.key==='Enter')go('misi-sifat','1')">
+          <div class="icon">💚</div>
+          <h4>Sifat Aljabar</h4>
+          <ul><li>Komutatif</li><li>Asosiatif</li><li>Distributif</li></ul>
+          <div class="go">Kotak Pilah Sampah →</div>
+        </div>
+        <div class="peta-node" tabindex="0" onclick="go('misi-pemodelan')" onkeypress="if(event.key==='Enter')go('misi-pemodelan')">
+          <div class="icon">🌍</div>
+          <h4>Pemodelan</h4>
+          <ul><li>Pahami situasi</li><li>Buat model</li><li>Sederhanakan</li><li>Tafsirkan</li></ul>
+          <div class="go">Mulai Misi →</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="background:var(--white);">
+    <div class="wrap">
+      <div class="section-head fade-in">
+        <span class="eyebrow">Misi Pembelajaran</span>
+        <h2>Pilih misi dan mulai belajar</h2>
+      </div>
+      ${misiCardsHTML()}
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="section-head fade-in">
+        <span class="eyebrow">Glosarium Mini</span>
+        <h2>Istilah penting aljabar</h2>
+      </div>
+      ${glosariumHTML(5)}
+      <div style="text-align:center;margin-top:24px;">
+        <button class="btn btn-outline btn-sm" onclick="go('materi')">Lihat Glosarium Lengkap →</button>
+      </div>
+    </div>
+  </section>
+
+  <section style="background:linear-gradient(160deg,var(--green-deep),#1F5B3C);border-radius:0;">
+    <div class="wrap" style="text-align:center;">
+      <h2 style="color:#fff;font-size:1.9rem;" class="fade-in">Siap memulai misi? 🌿</h2>
+      <p style="color:#DCEFDF;margin-top:10px;" class="fade-in">Yuk mulai dari Peta Konsep atau langsung ke halaman Materi &amp; Misi.</p>
+      <div style="margin-top:22px;" class="fade-in">
+        <button class="btn btn-coral" onclick="go('materi')">MULAI BELAJAR</button>
+      </div>
+    </div>
+  </section>
+  `;
+}
+
+function misiCardsHTML(){
+  const u = getMisiPercent('unsur', MISI_TOTALS.unsur);
+  const o = getMisiPercent('operasi', MISI_TOTALS.operasi);
+  const s = getMisiPercent('sifat', MISI_TOTALS.sifat);
+  const p = getMisiPercent('pemodelan', MISI_TOTALS.pemodelan);
+  const mk = (num,icon,title,desc,pct,onclick)=>`
+    <div class="misi-card fade-in">
+      <div class="misi-top"><span class="misi-num">${num}</span><span class="misi-icon">${icon}</span></div>
+      <h3>${title}</h3>
+      <p>${desc}</p>
+      <div class="mini-progress"><div class="mini-progress-fill" style="width:${pct}%"></div></div>
+      <div class="misi-status">${pct}% selesai</div>
+      <button class="btn btn-primary btn-sm" onclick="${onclick}">Mulai Misi →</button>
+    </div>`;
+  return `<div class="misi-grid">
+    ${mk('01','🌱','Unsur-Unsur Aljabar','Kenali variabel, koefisien, konstanta, dan suku.',u,"go('misi-unsur')")}
+    ${mk('02','♻️','Operasi Aljabar','Hitung dan sederhanakan bentuk aljabar.',o,"go('misi-operasi')")}
+    ${mk('03','💚','Sifat Aljabar','Temukan komutatif, asosiatif, dan distributif.',s,"go('misi-sifat','1')")}
+    ${mk('04','🌍','Pemodelan','Ubah masalah nyata menjadi model aljabar.',p,"go('misi-pemodelan')")}
+  </div>`;
+}
+
+function glosariumHTML(limit){
+  const items = limit ? GLOSARIUM.slice(0,limit) : GLOSARIUM;
+  return `<div class="glos-list">
+    ${items.map((g,i)=>`
+      <div class="glos-item" id="glos-${i}">
+        <button class="glos-q" onclick="toggleGlos(${i})">
+          <span>${g[0]}</span><span class="chev">⌄</span>
+        </button>
+        <div class="glos-a"><p>${g[1]}</p></div>
+      </div>`).join('')}
+  </div>`;
+}
+function toggleGlos(i){ document.getElementById('glos-'+i).classList.toggle('open'); }
+
+/* ============ PAGE: MATERI & MISI HUB ============ */
+function pageMateri(){
+  return `
+  <div class="page-hero">
+    <div class="wrap">
+      <div class="breadcrumb"><button onclick="go('beranda')">Beranda</button> / <span>Materi &amp; Misi</span></div>
+      <span class="badge">Kelas VII</span> <span class="badge coral">Cinta Lingkungan</span>
+      <h1 style="margin-top:14px;">Materi &amp; Misi</h1>
+      <p class="sub">Pilih salah satu misi untuk mempelajari materi lalu mengerjakan aktivitas interaktifnya. Progresmu akan otomatis tersimpan di perangkat ini.</p>
+    </div>
+  </div>
+  <section>
+    <div class="wrap">
+      ${misiCardsHTML()}
+    </div>
+  </section>
+  <section style="background:var(--white);">
+    <div class="wrap">
+      <div class="section-head fade-in">
+        <span class="eyebrow">Glosarium</span>
+        <h2>Semua istilah penting</h2>
+      </div>
+      ${glosariumHTML(null)}
+    </div>
+  </section>
+  `;
+}
+
+/* ============ PAGE: PROFIL ============ */
+function pageProfil(){
+  return `
+  <div class="page-hero">
+    <div class="wrap">
+      <div class="breadcrumb"><button onclick="go('beranda')">Beranda</button> / <span>Profil Pengembang</span></div>
+      <h1>👩‍🏫 Profil Pengembang</h1>
+      <p class="sub">Tim di balik Aljabar Cinta. Data lengkap akan dilengkapi kemudian.</p>
+    </div>
+  </div>
+  <section>
+    <div class="wrap">
+      <div class="profil-grid">
+        ${PENGEMBANG.map(p=>`
+          <div class="profil-card fade-in">
+            <div class="profil-photo">🧑‍💻</div>
+            <h4>${p.n}</h4>
+            <div class="role">${p.r}</div>
+            <p>Biodata dan foto pengembang akan ditambahkan.</p>
+          </div>`).join('')}
+      </div>
+    </div>
+  </section>
+  `;
+}
+
+/* helper: breadcrumb + tracker + back button block for misi pages */
+function misiHeader({title, badge, sub, breadcrumbLast, backHash}){
+  return `
+  <div class="page-hero">
+    <div class="wrap">
+      <div class="breadcrumb">
+        <button onclick="go('beranda')">Beranda</button> / <button onclick="go('materi')">Materi &amp; Misi</button> / <span>${breadcrumbLast}</span>
+      </div>
+      <span class="badge">Kelas VII</span> <span class="badge coral">Misi</span> ${badge||''}
+      <h1 style="margin-top:14px;">${title}</h1>
+      <p class="sub">${sub}</p>
+      <div class="back-row"><button class="btn btn-outline btn-sm" onclick="go('${backHash||'materi'}')">← Kembali ke Materi &amp; Misi</button></div>
+    </div>
+  </div>`;
+}
+
+/* ============ PAGE: MISI UNSUR ============ */
+function pageUnsur(){
+  return `
+  ${misiHeader({title:"🌱 Misi Unsur-Unsur Aljabar", sub:"Kenali variabel, koefisien, konstanta, dan suku melalui pola kantong sampah.", breadcrumbLast:"Misi Unsur"})}
+  <section>
+    <div class="wrap" style="max-width:880px;">
+      <div class="card fade-in">
+        <h3>📖 Apa itu Aljabar?</h3>
+        <p>Aljabar merupakan cabang matematika yang menggunakan <b>huruf, angka, dan simbol operasi</b> untuk menyatakan suatu hubungan atau permasalahan matematika. Huruf yang digunakan disebut <b>variabel</b>, sedangkan angka dan simbol menunjukkan hubungan antarvariabel.</p>
+        <p>Dalam kehidupan sehari-hari, aljabar digunakan untuk memodelkan berbagai situasi nyata, misalnya menghitung jumlah pohon yang akan ditanam, jumlah sampah yang berhasil dikurangi, atau memperkirakan kebutuhan bibit tanaman.</p>
+      </div>
+
+      <div class="card fade-in">
+        <h3>🗑️ Ilustrasi: Pola Kantong Sampah</h3>
+        <p>Kumpulkan sampah-sampah kering yang terdapat di halaman sekolah. Sampah tersebut selanjutnya dimasukkan ke dalam kantong-kantong plastik yang telah disiapkan. Setiap tahap, pola bertambah 3 kantong.</p>
+        <table class="matter">
+          <tr><th>Pola ke-</th><th>Banyak Kantong</th><th>Cara Hitung</th></tr>
+          <tr><td>1</td><td>2</td><td>3(1) − 1</td></tr>
+          <tr><td>2</td><td>5</td><td>3(2) − 1</td></tr>
+          <tr><td>3</td><td>8</td><td>3(3) − 1</td></tr>
+          <tr><td>4</td><td>11</td><td>3(4) − 1</td></tr>
+          <tr><td>5</td><td>14</td><td>3(5) − 1</td></tr>
+          <tr><td>...</td><td>...</td><td>...</td></tr>
+        </table>
+        <p>Setiap pola bertambah 3 kantong dan pola pertama dimulai dengan 2 kantong. Jika kita fokuskan pada cara hitungnya, ada angka yang nilainya <b>tetap</b> dan angka yang nilainya <b>berubah</b>. Rumus untuk pola ke-n adalah:</p>
+        <div class="formula">Uₙ = 3n − 1</div>
+        <p>Huruf <i>n</i> mewakili pola ke berapa yang ingin dihitung hasilnya.</p>
+      </div>
+
+      <div class="card fade-in">
+        <h3>🧩 Unsur-Unsur Aljabar pada 3n − 1</h3>
+        <div class="two-col">
+          <div class="formula light">
+            <b>n</b> → Variabel<br>
+            <b>3</b> → Koefisien<br>
+            <b>−1</b> → Konstanta<br>
+            <b>3n</b> dan <b>−1</b> → Suku
+          </div>
+          <div>
+            <p><b>Suku</b> adalah bilangan, variabel, atau perkalian antara bilangan dan variabel yang dipisahkan dengan operasi penjumlahan/pengurangan.</p>
+            <p><b>Koefisien</b> adalah angka sebagai faktor pengali dari suatu variabel.</p>
+            <p><b>Variabel</b> adalah huruf/simbol sebagai kuantitas tertentu yang nilainya berubah-ubah atau belum diketahui.</p>
+            <p><b>Konstanta</b> adalah bilangan yang nilainya tetap.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card fade-in">
+        <h3>✏️ Aktivitas: Amati Pola Kantong Sampah</h3>
+        <p>Perhatikan kembali pola kantong sampah di atas (Uₙ = 3n − 1).</p>
+        <label class="field-label">Berapa banyak kantong pada pola ke-6?</label>
+        <input type="number" id="u-q1" placeholder="Masukkan jawaban angka...">
+        <button class="btn btn-primary btn-sm" style="margin-top:12px;" onclick="checkUnsurQ1()">✔ CEK JAWABAN</button>
+        <div class="feedback" id="u-fb1"></div>
+        <div class="hint-box" id="u-hint1">💡 Petunjuk: Substitusikan n = 6 ke rumus Uₙ = 3n − 1.</div>
+      </div>
+
+      <div class="card fade-in">
+        <h3>🔤 Aktivitas: Identifikasi Unsur Aljabar</h3>
+        <p>Perhatikan bentuk aljabar berikut: <b>5x + 8</b>. Manakah yang merupakan koefisien dari x?</p>
+        <div class="mc-options" id="u-mc">
+          <label class="mc-option"><input type="radio" name="u-mc-opt" value="a"> 5</label>
+          <label class="mc-option"><input type="radio" name="u-mc-opt" value="b"> 8</label>
+          <label class="mc-option"><input type="radio" name="u-mc-opt" value="c"> x</label>
+          <label class="mc-option"><input type="radio" name="u-mc-opt" value="d"> 5x</label>
+        </div>
+        <button class="btn btn-primary btn-sm" style="margin-top:12px;" onclick="checkUnsurQ2()">✔ CEK JAWABAN</button>
+        <div class="feedback" id="u-fb2"></div>
+        <div class="hint-box" id="u-hint2">💡 Petunjuk: Koefisien adalah angka pengali di depan variabel.</div>
+      </div>
+
+      <div class="step-actions fade-in">
+        <button class="btn btn-outline" onclick="go('materi')">← Materi &amp; Misi</button>
+        <button class="btn btn-primary" onclick="go('misi-operasi')">Lanjut ke Misi Operasi →</button>
+      </div>
+    </div>
+  </section>
+  `;
+}
+
+function checkUnsurQ1(){
+  const val = parseInt(document.getElementById('u-q1').value);
+  const fb = document.getElementById('u-fb1');
+  const hint = document.getElementById('u-hint1');
+  if(val === 17){
+    fb.className='feedback ok show'; fb.innerHTML='<span class="bounce-check">✓</span> Hebat! Kamu berhasil menemukan polanya 🌱';
+    hint.classList.remove('show');
+    setMisiStep('unsur','q1',true);
+    showToast('Progress Misi Unsur tersimpan!');
+  } else {
+    fb.className='feedback bad show'; fb.textContent='Belum tepat. Coba perhatikan bagian yang berubah dan bagian yang tetap.';
+    hint.classList.add('show');
+  }
+}
+function checkUnsurQ2(){
+  const sel = document.querySelector('input[name="u-mc-opt"]:checked');
+  const fb = document.getElementById('u-fb2');
+  const hint = document.getElementById('u-hint2');
+  if(!sel){ fb.className='feedback bad show'; fb.textContent='Pilih salah satu jawaban terlebih dahulu.'; return; }
+  if(sel.value==='a'){
+    fb.className='feedback ok show'; fb.innerHTML='<span class="bounce-check">✓</span> Benar! 5 adalah koefisien dari x.';
+    hint.classList.remove('show');
+    setMisiStep('unsur','q2',true);
+    showToast('Progress Misi Unsur tersimpan!');
+  } else {
+    fb.className='feedback bad show'; fb.textContent='Belum tepat. Coba perhatikan kembali bagian yang berubah dan bagian yang tetap.';
+    hint.classList.add('show');
+  }
+}
+
+/* ============ PAGE: MISI OPERASI ============ */
+function pageOperasi(){
+  return `
+  ${misiHeader({title:"♻️ Misi Operasi Aljabar", sub:"Hitung dan sederhanakan bentuk aljabar melalui konteks penghijauan sekolah.", breadcrumbLast:"Misi Operasi"})}
+  <section>
+    <div class="wrap" style="max-width:880px;">
+      <div class="card fade-in">
+        <h3>➕➖ Penjumlahan dan Pengurangan</h3>
+        <p>Penjumlahan dan pengurangan bentuk aljabar hanya dapat dilakukan pada suku-suku yang <b>sejenis</b> (variabel dan pangkatnya sama), dengan cara menjumlahkan/mengurangkan koefisiennya. Suku yang tidak sejenis tetap ditulis apa adanya.</p>
+        <p><b>Ilustrasi:</b> Program penghijauan sekolah dilakukan dua kali. Pada kegiatan 1 ditanam (4a + 3) pohon, kegiatan 2 ditanam (2a − 1) pohon. Variabel a adalah banyak kelas yang berpartisipasi.</p>
+        <label class="field-label">Berapa jumlah pohon yang ditanam pada kedua kegiatan? (4a + 3) + (2a − 1) = ...</label>
+        <input type="text" id="o-q1" placeholder="Contoh: 6a + 2">
+        <button class="btn btn-primary btn-sm" style="margin-top:12px;" onclick="checkOperasiQ1()">✔ CEK JAWABAN</button>
+        <div class="feedback" id="o-fb1"></div>
+        <div class="hint-box" id="o-hint1">💡 Petunjuk: Jumlahkan suku sejenis (4a dengan 2a), lalu jumlahkan konstanta (3 dengan −1).</div>
+        <button class="btn btn-outline btn-sm" style="margin-top:10px;" onclick="togglePembahasan('o-pemb1','o-btn1')" id="o-btn1">LIHAT PEMBAHASAN</button>
+        <div class="pembahasan" id="o-pemb1">
+          <p>(4a + 3) + (2a − 1) = (4a + 2a) + (3 − 1) = <b>6a + 2</b></p>
+        </div>
+      </div>
+
+      <div class="card fade-in">
+        <h3>✖️ Perkalian</h3>
+        <p>Perkalian bentuk aljabar dilakukan dengan mengalikan setiap suku sesuai aturan perkalian, menggunakan sifat asosiatif (ab)c = a(bc), komutatif ab = ba, dan distributif a(b+c) = ab + ac.</p>
+        <p><b>Ilustrasi:</b> Setiap pohon membutuhkan 2 kg pupuk kompos. Jika banyak pohon dinyatakan (3n + 2), maka total kompos adalah 2(3n + 2).</p>
+        <label class="field-label">Hitunglah: 2(3n + 2) = ...</label>
+        <input type="text" id="o-q2" placeholder="Contoh: 6n + 4">
+        <button class="btn btn-primary btn-sm" style="margin-top:12px;" onclick="checkOperasiQ2()">✔ CEK JAWABAN</button>
+        <div class="feedback" id="o-fb2"></div>
+        <div class="hint-box" id="o-hint2">💡 Petunjuk: Kalikan 2 dengan setiap suku di dalam kurung (sifat distributif).</div>
+        <button class="btn btn-outline btn-sm" style="margin-top:10px;" onclick="togglePembahasan('o-pemb2','o-btn2')" id="o-btn2">LIHAT PEMBAHASAN</button>
+        <div class="pembahasan" id="o-pemb2">
+          <p>2(3n + 2) = (2×3n) + (2×2) = <b>6n + 4</b></p>
+          <p style="margin-top:10px;">Contoh lain: taman sekolah persegi panjang, panjang (a+6) m dan lebar (a+3) m. Luas = (a+6)(a+3) = a² + 3a + 6a + 18 = a² + 9a + 18.</p>
+        </div>
+      </div>
+
+      <div class="card fade-in">
+        <h3>➗ Pembagian</h3>
+        <p>Pembagian suku satu oleh suku satu dilakukan dengan membagi koefisien dengan koefisien, dan mengurangi pangkat variabel yang sama. Pembagian suku banyak oleh suku satu dilakukan dengan membagi setiap sukunya.</p>
+        <p><b>Ilustrasi:</b> Total kebutuhan kompos taman sekolah dinyatakan (12b + 9) kg, dibagi rata kepada 3 kelompok petugas taman.</p>
+        <label class="field-label">Berapa kompos yang diterima setiap kelompok? (12b + 9) : 3 = ...</label>
+        <input type="text" id="o-q3" placeholder="Contoh: 4b + 3">
+        <button class="btn btn-primary btn-sm" style="margin-top:12px;" onclick="checkOperasiQ3()">✔ CEK JAWABAN</button>
+        <div class="feedback" id="o-fb3"></div>
+        <div class="hint-box" id="o-hint3">💡 Petunjuk: Bagi setiap suku (12b dan 9) dengan 3 secara terpisah.</div>
+        <button class="btn btn-outline btn-sm" style="margin-top:10px;" onclick="togglePembahasan('o-pemb3','o-btn3')" id="o-btn3">LIHAT PEMBAHASAN</button>
+        <div class="pembahasan" id="o-pemb3">
+          <p>(12b + 9) : 3 = (12b:3) + (9:3) = <b>4b + 3</b></p>
+          <p style="margin-top:10px;">Contoh lain: 8b² : 2b = 4b, dan (6a² + 9a) : 3a = (6a²:3a) + (9a:3a) = 2a + 3.</p>
+        </div>
+      </div>
+
+      <div class="card fade-in">
+        <h3>📋 Rangkuman Operasi Aljabar</h3>
+        <table class="matter" style="text-align:left;">
+          <tr><th>Operasi</th><th>Aturan Singkat</th><th>Contoh</th></tr>
+          <tr><td>Penjumlahan</td><td>Jumlahkan koefisien suku sejenis; suku tidak sejenis ditulis terpisah.</td><td>3b + 5a + 4b = 5a + 7b</td></tr>
+          <tr><td>Pengurangan</td><td>Kurangkan koefisien suku sejenis; buka kurung dengan mengubah tanda.</td><td>(7p+5) − (3p+2) = 4p+3</td></tr>
+          <tr><td>Perkalian</td><td>Gunakan sifat distributif pada setiap suku.</td><td>2x(3x+5) = 6x² + 10x</td></tr>
+          <tr><td>Pembagian</td><td>Bagi koefisien dan kurangi pangkat, atau bagi tiap suku.</td><td>(6x²+9x):3x = 2x+3</td></tr>
+        </table>
+      </div>
+
+      <div class="step-actions fade-in">
+        <button class="btn btn-outline" onclick="go('misi-unsur')">← Misi Unsur</button>
+        <button class="btn btn-primary" onclick="go('misi-sifat','1')">Lanjut ke Misi Sifat →</button>
+      </div>
+    </div>
+  </section>
+  `;
+}
+function togglePembahasan(id, btnId){
+  document.getElementById(id).classList.toggle('show');
+  const btn = document.getElementById(btnId);
+  btn.textContent = document.getElementById(id).classList.contains('show') ? 'SEMBUNYIKAN PEMBAHASAN' : 'LIHAT PEMBAHASAN';
+}
+function normAlg(s){ return s.toLowerCase().replace(/\s+/g,'').replace(/×/g,'*'); }
+function checkOperasiQ1(){
+  const v = normAlg(document.getElementById('o-q1').value);
+  const fb=document.getElementById('o-fb1'), hint=document.getElementById('o-hint1');
+  if(v==='6a+2'){ fb.className='feedback ok show'; fb.innerHTML='<span class="bounce-check">✓</span> Hebat! Jawaban kamu tepat 🌳'; hint.classList.remove('show'); setMisiStep('operasi','q1',true); showToast('Progress Misi Operasi tersimpan!'); }
+  else { fb.className='feedback bad show'; fb.textContent='Belum tepat.'; hint.classList.add('show'); }
+}
+function checkOperasiQ2(){
+  const v = normAlg(document.getElementById('o-q2').value);
+  const fb=document.getElementById('o-fb2'), hint=document.getElementById('o-hint2');
+  if(v==='6n+4'){ fb.className='feedback ok show'; fb.innerHTML='<span class="bounce-check">✓</span> Tepat sekali! 🌱'; hint.classList.remove('show'); setMisiStep('operasi','q2',true); showToast('Progress Misi Operasi tersimpan!'); }
+  else { fb.className='feedback bad show'; fb.textContent='Belum tepat.'; hint.classList.add('show'); }
+}
+function checkOperasiQ3(){
+  const v = normAlg(document.getElementById('o-q3').value);
+  const fb=document.getElementById('o-fb3'), hint=document.getElementById('o-hint3');
+  if(v==='4b+3'){ fb.className='feedback ok show'; fb.innerHTML='<span class="bounce-check">✓</span> Kompos terbagi rata! 🌍'; hint.classList.remove('show'); setMisiStep('operasi','q3',true); showToast('Progress Misi Operasi tersimpan!'); }
+  else { fb.className='feedback bad show'; fb.textContent='Belum tepat.'; hint.classList.add('show'); }
+}
+
+/* ============ PAGE: MISI SIFAT (4 halaman) ============ */
+function sifatTracker(current){
+  const labels = ["1. Kotak Pilah","2. Coba & Temukan","3. Hitung Cepat","4. Refleksi"];
+  return `<div class="tracker">${labels.map((l,i)=>`<div class="dot ${i+1<current?'done':i+1===current?'current':''}">${l}</div>`).join('')}</div>`;
+}
+function pageSifat(step){
+  step = step>=1 && step<=4 ? step : 1;
+  let body = '';
+  if(step===1) body = sifatPage1();
+  else if(step===2) body = sifatPage2();
+  else if(step===3) body = sifatPage3();
+  else body = sifatPage4();
+  return `
+  ${misiHeader({title:"💚 Misi Kotak Pilah Sampah Mini", badge:'<span class="badge blue">Sifat Aljabar</span>', sub:'"Kelasku Bersih, Bumiku Sehat" — Materi: Sifat Komutatif, Asosiatif, dan Distributif. Kelas VII SMP, kegiatan kelompok 4–5 siswa.', breadcrumbLast:"Misi Sifat"})}
+  <section>
+    <div class="wrap" style="max-width:880px;">
+      ${sifatTracker(step)}
+      ${body}
+    </div>
+  </section>`;
+}
+
+function sifatPage1(){
+  return `
+  <div class="card fade-in">
+    <h3>🎯 Tujuan</h3>
+    <ul>
+      <li>menemukan sifat komutatif, asosiatif, dan distributif;</li>
+      <li>mengubah bentuk aljabar menjadi bentuk ekuivalen;</li>
+      <li>memilih bentuk aljabar yang lebih mudah digunakan;</li>
+      <li>bekerja sama dan peduli terhadap lingkungan.</li>
+    </ul>
+    <div class="two-col" style="margin-top:14px;">
+      <div>
+        <h4>🧰 Alat</h4>
+        <ul><li>3 kotak kecil</li><li>kartu x</li><li>kartu y</li><li>tutup botol bersih</li></ul>
+      </div>
+      <div>
+        <h4>🔤 Arti Model</h4>
+        <ul><li>x = paket sampah kertas</li><li>y = paket sampah plastik</li><li>1 tutup botol = 1 sampah kemasan</li></ul>
+      </div>
+    </div>
+  </div>
+  <div class="card fade-in">
+    <h3>📖 Cerita Masalah</h3>
+    <p>Tiga kelompok piket mengumpulkan sampah:</p>
+    <div class="two-col">
+      <div class="story-box"><b>Kelompok A</b><br>x + 2</div>
+      <div class="story-box"><b>Kelompok B</b><br>y + 3</div>
+    </div>
+    <div class="story-box" style="margin-top:14px;"><b>Kelompok C</b><br>x + y + 1</div>
+    <h4 style="margin-top:18px;">🎯 Misi</h4>
+    <p>Bagaimana cara menyusun dan menghitung seluruh sampah dengan lebih mudah tanpa mengubah jumlahnya?</p>
+    <div class="formula">(x+2) + (y+3) + (x+y+1)</div>
+    <div class="step-actions">
+      <button class="btn btn-primary" onclick="sifatComplete1()">▶ MULAI MISI</button>
+    </div>
+  </div>`;
+}
+function sifatComplete1(){ setMisiStep('sifat','p1',true); showToast('Misi dimulai! Progress tersimpan 🌱'); go('misi-sifat','2'); }
+
+function sifatPage2(){
+  return `
+  <div class="card fade-in">
+    <h3>🔍 Aktivitas 1 — Tukar Posisi</h3>
+    <div class="formula light">(x+2) + (y+3)&nbsp;&nbsp;→&nbsp;&nbsp;(y+3) + (x+2)</div>
+    <p><b>Apakah jumlahnya berubah?</b></p>
+    <div class="mc-options">
+      <label class="mc-option"><input type="radio" name="s2-ya"> Ya</label>
+      <label class="mc-option"><input type="radio" name="s2-ya"> Tidak</label>
+    </div>
+    <label class="field-label">Lengkapi: a + b = ...</label>
+    <input type="text" id="s2-eq1" placeholder="Contoh: b + a">
+    <label class="field-label">Nama sifat</label>
+    <input type="text" id="s2-name1" placeholder="Nama sifat...">
+    <label class="field-label">Temuan Kelompok: "Menukar ______ tidak mengubah hasil penjumlahan."</label>
+    <input type="text" id="s2-temuan1" placeholder="Isi bagian yang kosong...">
+  </div>
+  <div class="card fade-in">
+    <h3>🧩 Aktivitas 2 — Ubah Pengelompokan</h3>
+    <div class="formula light">[(x+2)+(y+3)]+(x+y+1)&nbsp;&nbsp;→&nbsp;&nbsp;(x+2)+[(y+3)+(x+y+1)]</div>
+    <p><b>Apakah jumlahnya berubah?</b></p>
+    <div class="mc-options">
+      <label class="mc-option"><input type="radio" name="s2-ya2"> Ya</label>
+      <label class="mc-option"><input type="radio" name="s2-ya2"> Tidak</label>
+    </div>
+    <label class="field-label">Lengkapi: (a+b)+c = ...</label>
+    <input type="text" id="s2-eq2" placeholder="Contoh: a+(b+c)">
+    <label class="field-label">Nama sifat</label>
+    <input type="text" id="s2-name2" placeholder="Nama sifat...">
+    <label class="field-label">Temuan Kelompok: "Mengubah ______ tidak mengubah hasil penjumlahan."</label>
+    <input type="text" id="s2-temuan2" placeholder="Isi bagian yang kosong...">
+    <div class="feedback" id="s2-fb"></div>
+    <div class="step-actions">
+      <button class="btn btn-outline" onclick="go('misi-sifat','1')">← Kembali</button>
+      <button class="btn btn-primary" onclick="sifatCheck2()">LANJUT KE MISI BERIKUTNYA →</button>
+    </div>
+  </div>`;
+}
+function sifatCheck2(){
+  const fb = document.getElementById('s2-fb');
+  const filled = ['s2-eq1','s2-name1','s2-temuan1','s2-eq2','s2-name2','s2-temuan2'].every(id=>document.getElementById(id).value.trim()!=='');
+  if(!filled){ fb.className='feedback bad show'; fb.textContent='Yuk lengkapi dulu semua isian sebelum melanjutkan.'; return; }
+  fb.className='feedback ok show'; fb.innerHTML='<span class="bounce-check">✓</span> Kerja bagus! Kalian menemukan sifat komutatif & asosiatif.';
+  setMisiStep('sifat','p2',true);
+  showToast('Progress Misi Sifat tersimpan!');
+  setTimeout(()=>go('misi-sifat','3'), 700);
+}
+
+function sifatPage3(){
+  return `
+  <div class="card fade-in">
+    <h3>♻️ Aktivitas 3 — Tiga Hari Pemilahan Sampah</h3>
+    <p>Setiap hari terkumpul: <b>x + y + 2</b>. Selama 3 hari: <b>3(x+y+2)</b></p>
+    <h4>Praktikkan</h4>
+    <p>Siapkan 3 kotak. Masukkan ke setiap kotak: 1 kartu x, 1 kartu y, 2 tutup botol. Kemudian gabungkan semuanya.</p>
+    <div class="two-col">
+      <div>
+        <label class="field-label">Jumlah kartu x =</label>
+        <input type="number" id="s3-x" placeholder="...">
+        <label class="field-label">Jumlah kartu y =</label>
+        <input type="number" id="s3-y" placeholder="...">
+        <label class="field-label">Jumlah tutup botol =</label>
+        <input type="number" id="s3-b" placeholder="...">
+      </div>
+      <div>
+        <label class="field-label">Sehingga: 3(x+y+2) = ...</label>
+        <input type="text" id="s3-result" placeholder="Contoh: 3x+3y+6">
+        <label class="field-label">Temukan Polanya: a(b+c) = ...</label>
+        <input type="text" id="s3-pattern" placeholder="Contoh: ab+ac">
+        <label class="field-label">Nama sifat</label>
+        <input type="text" id="s3-name" placeholder="Nama sifat...">
+      </div>
+    </div>
+    <label class="field-label">Kesimpulan: "Bilangan di luar kurung dikalikan dengan ______ di dalam kurung."</label>
+    <input type="text" id="s3-kesimpulan" placeholder="Isi bagian yang kosong...">
+  </div>
+
+  <div class="card fade-in">
+    <h3>🚀 Misi Tantangan</h3>
+    <p>Selama <b>4 hari</b>, setiap hari terkumpul: <b>2x + y + 3</b></p>
+    <label class="field-label">Model Aljabar (4 hari) = ...</label>
+    <input type="text" id="s3-model" placeholder="Contoh: 4(2x+y+3)">
+    <label class="field-label">Ubah tanpa tanda kurung: 4(2x+y+3) = ...</label>
+    <input type="text" id="s3-nokurung" placeholder="Contoh: 8x+4y+12">
+    <label class="field-label">Tuliskan satu bentuk lain yang ekuivalen</label>
+    <input type="text" id="s3-ekuivalen" placeholder="Contoh: 4y+8x+12">
+    <label class="field-label">Sifat yang digunakan</label>
+    <div class="pill-select">
+      <label><input type="checkbox" name="s3-sifat"> Komutatif</label>
+      <label><input type="checkbox" name="s3-sifat"> Asosiatif</label>
+      <label><input type="checkbox" name="s3-sifat"> Distributif</label>
+    </div>
+    <div class="feedback" id="s3-fb"></div>
+    <div class="step-actions">
+      <button class="btn btn-outline" onclick="go('misi-sifat','2')">← Kembali</button>
+      <button class="btn btn-primary" onclick="sifatCheck3()">PERIKSA &amp; SIMPULKAN →</button>
+    </div>
+  </div>`;
+}
+function sifatCheck3(){
+  const fb = document.getElementById('s3-fb');
+  const ids = ['s3-x','s3-y','s3-b','s3-result','s3-pattern','s3-name','s3-kesimpulan','s3-model','s3-nokurung','s3-ekuivalen'];
+  const filled = ids.every(id=>document.getElementById(id).value.toString().trim()!=='');
+  if(!filled){ fb.className='feedback bad show'; fb.textContent='Lengkapi dulu semua isian ya, sebelum melanjutkan.'; return; }
+  fb.className='feedback ok show'; fb.innerHTML='<span class="bounce-check">✓</span> Keren! Kalian menemukan sifat distributif.';
+  setMisiStep('sifat','p3',true);
+  showToast('Progress Misi Sifat tersimpan!');
+  setTimeout(()=>go('misi-sifat','4'), 700);
+}
+
+function sifatPage4(){
+  const checklist = ["Kami memahami masalah.","Kami membuat model aljabar.","Kami menukar urutan suku.","Kami mengubah pengelompokan.","Kami menggunakan sifat distributif.","Kami menemukan bentuk ekuivalen."];
+  return `
+  <div class="card fade-in">
+    <h3>✅ Periksa Kembali</h3>
+    ${checklist.map((c,i)=>`<div class="check-row"><input type="checkbox" id="s4-c${i}"><label for="s4-c${i}">${c}</label></div>`).join('')}
+  </div>
+  <div class="card fade-in">
+    <h3>🧠 Apa yang Kalian Temukan?</h3>
+    <div class="two-col">
+      <div>
+        <h4>Sifat Komutatif</h4>
+        <div class="formula light">a + b = ...</div>
+        <input type="text" id="s4-komut" placeholder="Menukar ______ tidak mengubah hasil.">
+      </div>
+      <div>
+        <h4>Sifat Asosiatif</h4>
+        <div class="formula light">(a+b)+c = ...</div>
+        <input type="text" id="s4-asos" placeholder="Mengubah ______ tidak mengubah hasil.">
+      </div>
+    </div>
+    <h4 style="margin-top:16px;">Sifat Distributif</h4>
+    <div class="formula light">a(b+c) = ...</div>
+    <input type="text" id="s4-distrib" placeholder="Bilangan di luar kurung dikalikan dengan ______ di dalam kurung.">
+    <h4 style="margin-top:16px;">Bentuk Aljabar Ekuivalen</h4>
+    <p>Dua bentuk aljabar disebut ekuivalen jika...</p>
+    <textarea id="s4-ekuivalen" placeholder="Tuliskan jawabanmu di sini..."></textarea>
+  </div>
+  <div class="card fade-in" style="background:var(--green-pale);border:none;">
+    <h4>🌟 Kesimpulan Utama</h4>
+    <p>Sifat komutatif, asosiatif, dan distributif dapat digunakan untuk mengubah bentuk aljabar menjadi bentuk lain yang ekuivalen tanpa mengubah nilainya. Bentuk yang dipilih dapat disesuaikan agar perhitungan dan penyelesaian masalah menjadi lebih mudah.</p>
+  </div>
+  <div class="card fade-in">
+    <h3>❤️ Refleksi Cinta Lingkungan</h3>
+    <p>Tuliskan satu kebiasaan sederhana yang dapat kalian lakukan untuk mengurangi sampah di kelas.</p>
+    <textarea id="s4-refleksi" placeholder="Tuliskan refleksimu di sini..."></textarea>
+    <p style="margin-top:14px;font-style:italic;color:var(--green-deep);font-weight:700;">"Pilah sampah dengan bijak, susun aljabar dengan tepat."</p>
+    <div class="step-actions">
+      <button class="btn btn-outline" onclick="go('misi-sifat','3')">← Kembali</button>
+      <button class="btn btn-coral" onclick="sifatFinish()">✓ SELESAI</button>
+    </div>
+    <div id="s4-done"></div>
+  </div>`;
+}
+function sifatFinish(){
+  setMisiStep('sifat','p4',true);
+  document.getElementById('s4-done').innerHTML = `
+    <div class="done-anim fade-in visible">
+      <div class="big-emoji">🌍🍃⭐</div>
+      <p style="font-weight:800;color:var(--green-deep);">Misi Sifat Aljabar selesai! Terima kasih sudah peduli lingkungan.</p>
+      <button class="btn btn-primary" style="margin-top:10px;" onclick="go('misi-pemodelan')">Lanjut ke Misi Pemodelan →</button>
+    </div>`;
+  showToast('Misi Sifat Aljabar selesai! 🎉');
+}
+
+/* ============ PAGE: MISI PEMODELAN ============ */
+function pagePemodelan(sub){
+  if(!sub){
+    return `
+    ${misiHeader({title:"🌍 Misi Pemodelan", sub:"Memodelkan Masalah Cinta Lingkungan dengan Bentuk Aljabar", breadcrumbLast:"Misi Pemodelan"})}
+    <section>
+      <div class="wrap">
+        <div class="card fade-in">
+          <h3>📚 Pola Pemodelan yang Digunakan</h3>
+          <p>Untuk setiap permasalahan, gunakan 7 langkah berikut:</p>
+          <div class="tracker">${POLA_STEPS.map((s,i)=>`<div class="dot">${i+1}. ${s}</div>`).join('')}</div>
+        </div>
+        <div class="misi-grid" style="margin-top:10px;">
+          ${PEMODELAN.map((p,i)=>{
+            const done = progress.pemodelan && progress.pemodelan[p.id];
+            return `<div class="misi-card fade-in">
+              <div class="misi-top"><span class="misi-num">0${i+1}</span><span class="misi-icon">${p.emoji}</span></div>
+              <h3>${p.title}</h3>
+              <p>${p.tasks.length} tugas interaktif berbasis cerita nyata.</p>
+              <div class="misi-status">${done?'✓ Selesai':'Belum selesai'}</div>
+              <button class="btn btn-primary btn-sm" onclick="go('misi-pemodelan','${p.id}')">${done?'Lihat Kembali →':'Mulai →'}</button>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>
+    </section>`;
+  }
+  const problem = PEMODELAN.find(p=>p.id===sub);
+  if(!problem) return pagePemodelan(null);
+  const idx = PEMODELAN.indexOf(problem);
+  return `
+  ${misiHeader({title:`${problem.emoji} ${problem.title}`, badge:'<span class="badge blue">Pemodelan</span>', sub:'Ikuti 7 langkah pemodelan untuk menyelesaikan masalah ini.', breadcrumbLast:"Misi Pemodelan"})}
+  <section>
+    <div class="wrap" style="max-width:880px;">
+      <div class="card fade-in">
+        <h3>📖 Cerita</h3>
+        <div class="story-box">${problem.story.map(p=>`<p>${p}</p>`).join('')}</div>
+      </div>
+      <div class="card fade-in">
+        <h3>✏️ Tugas Kalian</h3>
+        ${problem.tasks.map((t,i)=>`
+          <div class="task-item">
+            <p><span class="task-num">${i+1}</span>${t}</p>
+            <textarea id="pm-${problem.id}-${i}" placeholder="Tuliskan jawabanmu di sini..."></textarea>
+          </div>`).join('')}
+        <div class="feedback" id="pm-fb-${problem.id}"></div>
+        <div class="step-actions">
+          <button class="btn btn-outline" onclick="go('misi-pemodelan')">← Semua Permasalahan</button>
+          <button class="btn btn-coral" onclick="pemodelanFinish('${problem.id}')">✓ SELESAIKAN MISI INI</button>
+          ${idx<PEMODELAN.length-1?`<button class="btn btn-primary" onclick="go('misi-pemodelan','${PEMODELAN[idx+1].id}')">Permasalahan Berikutnya →</button>`:''}
+        </div>
+        <div id="pm-done-${problem.id}"></div>
+      </div>
+    </div>
+  </section>`;
+}
+function pemodelanFinish(id){
+  const problem = PEMODELAN.find(p=>p.id===id);
+  const filled = problem.tasks.every((t,i)=>document.getElementById(`pm-${id}-${i}`).value.trim()!=='');
+  const fb = document.getElementById(`pm-fb-${id}`);
+  if(!filled){
+    fb.className='feedback bad show';
+    fb.textContent='Yuk isi dulu semua jawaban tugas sebelum menyelesaikan misi ini.';
+    return;
+  }
+  fb.className='feedback ok show';
+  fb.innerHTML='<span class="bounce-check">✓</span> Semua tugas terisi. Kerja bagus!';
+  setMisiStep('pemodelan', id, true);
+  showToast('Progress Misi Pemodelan tersimpan! 🌍');
+  document.getElementById(`pm-done-${id}`).innerHTML = `
+    <div class="done-anim fade-in visible"><div class="big-emoji">🌱⭐🌍</div>
+    <p style="font-weight:800;color:var(--green-deep);">Permasalahan selesai! Aljabar membantumu memahami masalah lingkungan lebih baik.</p></div>`;
+}
+
+/* ============ AFTER RENDER HOOKS ============ */
+function afterRender(page, sub){
+  updateGlobalProgress();
+}
+
+/* init */
+render();
+</script>
+</body>
+</html>
