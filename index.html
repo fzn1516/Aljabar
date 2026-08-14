@@ -429,11 +429,11 @@ input:focus,textarea:focus{outline:3px solid var(--blue-sky);outline-offset:1px;
     </div>
     <div class="nav-links" id="navLinks">
       <button data-page="beranda" onclick="go('beranda')">Beranda</button>
-      <button data-page="materi" onclick="go('materi')">Materi &amp; Misi</button>
+      <button data-page="petunjuk" onclick="go('petunjuk')">Petunjuk Penggunaan</button>
       <button data-page="profil" onclick="go('profil')">Profil Pengembang</button>
     </div>
     <div class="nav-cta">
-      <button class="btn btn-primary btn-sm" onclick="go('materi')">✨ <span class="long">Mulai Belajar</span></button>
+      <button class="btn btn-primary btn-sm" onclick="go('pilihan')">✨ <span class="long">Mulai Belajar</span></button>
       <button class="hamburger" onclick="toggleMobileMenu()" aria-label="Buka menu">
         <span></span><span></span><span></span>
       </button>
@@ -441,7 +441,7 @@ input:focus,textarea:focus{outline:3px solid var(--blue-sky);outline-offset:1px;
   </div>
   <div id="mobileMenu">
     <button onclick="go('beranda');toggleMobileMenu()">🏠 Beranda</button>
-    <button onclick="go('materi');toggleMobileMenu()">📘 Materi &amp; Misi</button>
+    <button onclick="go('petunjuk');toggleMobileMenu()">📋 Petunjuk Penggunaan</button>
     <button onclick="go('profil');toggleMobileMenu()">👩‍🏫 Profil Pengembang</button>
   </div>
   <div id="progressStrip"><div id="progressFill"></div></div>
@@ -458,7 +458,7 @@ input:focus,textarea:focus{outline:3px solid var(--blue-sky);outline-offset:1px;
       </div>
       <div class="foot-nav">
         <button onclick="go('beranda')">Beranda</button>
-        <button onclick="go('materi')">Materi &amp; Misi</button>
+        <button onclick="go('petunjuk')">Petunjuk Penggunaan</button>
         <button onclick="go('profil')">Profil Pengembang</button>
       </div>
     </div>
@@ -471,7 +471,7 @@ input:focus,textarea:focus{outline:3px solid var(--blue-sky);outline-offset:1px;
 
 <script>
 /* ============ PROGRESS / STORAGE ============ */
-const STORE_KEY = "aljabarcinta_progress_v1";
+const STORE_KEY = "aljabarcinta_progress_v2";
 function loadProgress(){
   try{ return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; }catch(e){ return {}; }
 }
@@ -489,7 +489,8 @@ function getMisiPercent(misi, totalSteps){
   const done = progress[misi] ? Object.values(progress[misi]).filter(Boolean).length : 0;
   return Math.round((done/totalSteps)*100);
 }
-const MISI_TOTALS = { unsur:3, operasi:4, sifat:4, pemodelan:5 };
+const MISI_TOTALS = { unsur:4, operasi:4, sifat:4, pemodelan:7 };
+const MATERI_TOTALS = { materiUnsur:3, materiOperasi:4 };
 function updateGlobalProgress(){
   let totalDone = 0, totalAll = 0;
   MISI_LIST.forEach(m=>{
@@ -645,8 +646,37 @@ const PEMODELAN = [
       "Jelaskan makna model akhir yang kalian peroleh."
     ]
   }
-];
+  ,{
+    id:"p6", emoji:"🪴", title:"Soal 1 — Taman Sekolah dan Kebutuhan Air",
+    story:[
+      "Soal mata pelajaran Matematika materi Bentuk Aljabar.",
+      "Taman sekolah memiliki dua jenis pot tanaman, yaitu pot kecil dan pot besar. Setiap pot kecil memerlukan 1 liter air, sedangkan setiap pot besar memerlukan 2 liter air. Selain itu, petugas kebersihan menyiapkan 5 liter air tambahan."
+    ],
+    tasks:[
+      "a. Apa yang anda fahami dari cerita di atas?",
+      "b. Tuliskan bentuk aljabar untuk menyatakan total air yang dibutuhkan.",
+      "c. Tentukan suku variabel dan suku konstanta dari bentuk tersebut.",
+      "d. Periksa Kembali jawaban c, apakah hasilnya benar? Jelaskan."
+    ],
+    materi:"materi-unsur"
+  },
+  {
+    id:"p7", emoji:"💧", title:"Soal 2 — Program Hemat Air di Sekolah",
+    story:[
+      "Soal mata pelajaran Matematika materi Bentuk Aljabar.",
+      "Sebelum program hemat air, sekolah menggunakan 9 bagian air untuk menyiram tanaman dan 6 bagian air untuk membersihkan kelas. Setelah program hemat air, penggunaan air berkurang sebanyak 3 bagian air untuk menyiram tanaman dan 2 bagian air untuk membersihkan kelas.",
+      "Jika air untuk menyiram tanaman sebanyak 10 liter per bagian dan air untuk membersihkan kelas sebanyak 5 liter per bagian, tentukan penggunaan air setelah program tersebut."
+    ],
+    tasks:[
+      "a. Apa yang anda fahami dari cerita di atas?",
+      "b. Tentukan bentuk aljabar penggunaan air setelah program hemat air.",
+      "c. Jika air untuk menyiram tanaman sebanyak 10 liter per bagian dan air untuk membersihkan kelas sebanyak 5 liter per bagian, berapa liter air yang digunakan setelah program tersebut?",
+      "d. Periksa Kembali jawaban c, apakah hasilnya benar? Jelaskan."
+    ],
+    materi:"materi-operasi"
+  }
 
+];
 const POLA_STEPS = ["Pahami Situasi","Tentukan Variabel","Buat Model","Operasikan Model","Gunakan Sifat Aljabar","Sederhanakan","Tafsirkan Kembali"];
 
 /* ============ RENDER ROUTER ============ */
@@ -659,9 +689,15 @@ function render(){
   updateGlobalProgress();
 
   if(page==='beranda') main.innerHTML = pageBeranda();
-  else if(page==='materi') main.innerHTML = pageMateri();
-  else if(page==='misi-unsur') main.innerHTML = pageUnsur();
-  else if(page==='misi-operasi') main.innerHTML = pageOperasi();
+  else if(page==='pilihan') main.innerHTML = pagePilihan();
+  else if(page==='petunjuk') main.innerHTML = pagePetunjuk();
+  else if(page==='materi-peta') main.innerHTML = pageMateriPeta();
+  else if(page==='materi-unsur') main.innerHTML = pageMateriUnsur();
+  else if(page==='materi-operasi') main.innerHTML = pageMateriOperasi();
+  else if(page==='materi-sifat') main.innerHTML = pageMateriSifat();
+  else if(page==='misi-peta') main.innerHTML = pageMisiPeta();
+  else if(page==='misi-unsur') main.innerHTML = pageMisiUnsur(sub? parseInt(sub):1);
+  else if(page==='misi-operasi') main.innerHTML = pageMisiOperasi(sub? parseInt(sub):1);
   else if(page==='misi-sifat') main.innerHTML = pageSifat(sub? parseInt(sub):1);
   else if(page==='misi-pemodelan') main.innerHTML = pagePemodelan(sub || null);
   else if(page==='profil') main.innerHTML = pageProfil();
@@ -822,6 +858,48 @@ function trashBinsSVG(){
   </svg>`;
 }
 
+function potBibitSVG(){
+  return `
+  <svg viewBox="0 0 460 170" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;" aria-hidden="true">
+    <ellipse cx="230" cy="155" rx="200" ry="12" fill="#DCEFDF"/>
+    ${[80,230,380].map((x,i)=>`
+      <g transform="translate(${x},50)">
+        <path d="M-4 46 C-14 30 -10 6 0 -2 C10 6 14 30 4 46 Z" fill="${i===1?'#6BC98A':'#4CAF6C'}"/>
+        <path d="M0 30 C-10 20 -16 10 -14 -4" stroke="#2E7D4F" stroke-width="2.5" fill="none"/>
+        <path d="M0 30 C10 20 16 10 14 -4" stroke="#2E7D4F" stroke-width="2.5" fill="none"/>
+        <path d="M-22 46 L22 46 L18 76 L-18 76 Z" fill="${['#F5A623','#5FB6E5','#FF8F7A'][i]}"/>
+        <rect x="-24" y="42" width="48" height="8" rx="3" fill="${['#D98E12','#3D8FC4','#E06B54'][i]}"/>
+        <text x="0" y="94" text-anchor="middle" font-family="Baloo 2, sans-serif" font-size="13" fill="#173B4C" font-weight="700">Kelompok ${['A','B','C'][i]}</text>
+      </g>`).join('')}
+    <g transform="translate(230,20)">
+      <rect x="-30" y="0" width="60" height="26" rx="8" fill="#173B4C"/>
+      <text x="0" y="18" text-anchor="middle" font-family="Baloo 2, sans-serif" font-size="15" fill="#fff" font-weight="700">3x + 2</text>
+    </g>
+  </svg>`;
+}
+
+function kebunVertikalSVG(){
+  return `
+  <svg viewBox="0 0 460 190" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;" aria-hidden="true">
+    <ellipse cx="230" cy="175" rx="200" ry="12" fill="#DCEFDF"/>
+    <line x1="40" y1="10" x2="420" y2="10" stroke="#8B5E34" stroke-width="8" stroke-linecap="round"/>
+    <line x1="40" y1="10" x2="40" y2="40" stroke="#8B5E34" stroke-width="8"/>
+    <line x1="420" y1="10" x2="420" y2="40" stroke="#8B5E34" stroke-width="8"/>
+    ${[110,230,350].map((x,i)=>`
+      <g transform="translate(${x},20)">
+        <line x1="0" y1="0" x2="0" y2="30" stroke="#8B5E34" stroke-width="3"/>
+        <path d="M-16 30 a16 20 0 1 0 32 0 v40 a16 8 0 0 1 -32 0 Z" fill="${['#8FD6A0','#5FB6E5','#FF9B87'][i]}" opacity="0.85"/>
+        <rect x="-16" y="26" width="32" height="10" rx="4" fill="#3D8FC4"/>
+        <path d="M-8 32 q8 -14 16 0" stroke="#2E7D4F" stroke-width="3" fill="none"/>
+        <text x="0" y="98" text-anchor="middle" font-family="Baloo 2, sans-serif" font-size="12" fill="#173B4C" font-weight="700">Botol ${['A','B','C'][i]}</text>
+      </g>`).join('')}
+    <g transform="translate(230,140)">
+      <path d="M-20 0 L20 0 L16 26 L-16 26 Z" fill="#8B5E34"/>
+      <text x="0" y="18" text-anchor="middle" font-family="Baloo 2, sans-serif" font-size="11" fill="#fff" font-weight="700">kompos 12n+6</text>
+    </g>
+  </svg>`;
+}
+
 function bankSampahSVG(){
   return `
   <svg viewBox="0 0 460 170" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;" aria-hidden="true">
@@ -873,7 +951,7 @@ function pageBeranda(){
         <div class="hero-sub">Untuk SMP/MTs Kelas VII</div>
         <p class="hero-desc">Belajar aljabar melalui masalah nyata di sekitar kita, dengan semangat mencintai lingkungan.</p>
         <div class="hero-actions">
-          <button class="btn btn-primary" onclick="go('materi')">🚀 Mulai Belajar</button>
+          <button class="btn btn-primary" onclick="go('pilihan')">🚀 Mulai Belajar</button>
           <button class="btn btn-outline" onclick="document.getElementById('peta').scrollIntoView({behavior:'smooth'})">🗺️ Lihat Peta Konsep</button>
         </div>
         <div class="hero-badges">
@@ -932,7 +1010,7 @@ function pageBeranda(){
       <div class="section-head fade-in">
         <span class="eyebrow">Peta Konsep</span>
         <h2>PETA KONSEP ALJABAR</h2>
-        <p>Klik salah satu bagian untuk langsung memulai misi pembelajarannya.</p>
+        <p>Klik salah satu bagian untuk memilih jalur belajar (Materi atau Misi Pemecahan Masalah).</p>
       </div>
       <div class="peta-map fade-in">
         <svg class="connectors" viewBox="0 0 940 560" preserveAspectRatio="none">
@@ -948,21 +1026,21 @@ function pageBeranda(){
         </svg>
         <div class="peta-map-grid">
           <div class="peta-cell-tl">
-            <div class="peta-corner c-green" tabindex="0" onclick="go('misi-unsur')" onkeypress="if(event.key==='Enter')go('misi-unsur')">
+            <div class="peta-corner c-green" tabindex="0" onclick="go('pilihan')" onkeypress="if(event.key==='Enter')go('pilihan')">
               <div class="peta-circle bg-green">𝑥</div>
               <h4 style="color:#2E7D4F;">Unsur-Unsur Aljabar</h4>
               <div class="underline-dots" style="color:#2E7D4F;"></div>
               <p>variabel, koefisien, konstanta, dan suku</p>
-              <div class="go" style="color:#2E7D4F;">Mulai Misi →</div>
+              <div class="go" style="color:#2E7D4F;">Mulai Belajar →</div>
             </div>
           </div>
           <div class="peta-cell-tr">
-            <div class="peta-corner c-orange" tabindex="0" onclick="go('misi-operasi')" onkeypress="if(event.key==='Enter')go('misi-operasi')">
+            <div class="peta-corner c-orange" tabindex="0" onclick="go('pilihan')" onkeypress="if(event.key==='Enter')go('pilihan')">
               <div class="peta-circle bg-orange">+−</div>
               <h4 style="color:#B8720C;">Operasi Aljabar</h4>
               <div class="underline-dots" style="color:#B8720C;"></div>
               <p>penjumlahan, pengurangan, perkalian, dan pembagian</p>
-              <div class="go" style="color:#B8720C;">Mulai Misi →</div>
+              <div class="go" style="color:#B8720C;">Mulai Belajar →</div>
             </div>
           </div>
           <div class="peta-center-cell">
@@ -971,21 +1049,21 @@ function pageBeranda(){
             </div>
           </div>
           <div class="peta-cell-bl">
-            <div class="peta-corner c-purple" tabindex="0" onclick="go('misi-sifat','1')" onkeypress="if(event.key==='Enter')go('misi-sifat','1')">
+            <div class="peta-corner c-purple" tabindex="0" onclick="go('pilihan')" onkeypress="if(event.key==='Enter')go('pilihan')">
               <div class="peta-circle bg-purple">⚖️</div>
               <h4 style="color:#7A4FB0;">Sifat Aljabar</h4>
               <div class="underline-dots" style="color:#7A4FB0;"></div>
               <p>komutatif, asosiatif, dan distributif</p>
-              <div class="go" style="color:#7A4FB0;">Kotak Pilah Sampah →</div>
+              <div class="go" style="color:#7A4FB0;">Mulai Belajar →</div>
             </div>
           </div>
           <div class="peta-cell-br">
-            <div class="peta-corner c-blue" tabindex="0" onclick="go('misi-pemodelan')" onkeypress="if(event.key==='Enter')go('misi-pemodelan')">
+            <div class="peta-corner c-blue" tabindex="0" onclick="go('pilihan')" onkeypress="if(event.key==='Enter')go('pilihan')">
               <div class="peta-circle bg-blue">🌍</div>
               <h4 style="color:#2E6E96;">Pemodelan</h4>
               <div class="underline-dots" style="color:#2E6E96;"></div>
               <p>mengubah masalah kontekstual ke bentuk aljabar</p>
-              <div class="go" style="color:#2E6E96;">Mulai Misi →</div>
+              <div class="go" style="color:#2E6E96;">Mulai Belajar →</div>
             </div>
           </div>
         </div>
@@ -1011,7 +1089,7 @@ function pageBeranda(){
       </div>
       ${glosariumHTML(5)}
       <div style="text-align:center;margin-top:24px;">
-        <button class="btn btn-outline btn-sm" onclick="go('materi')">Lihat Glosarium Lengkap →</button>
+        <button class="btn btn-outline btn-sm" onclick="go('materi-peta')">Lihat Glosarium Lengkap →</button>
       </div>
     </div>
   </section>
@@ -1021,7 +1099,7 @@ function pageBeranda(){
       <h2 style="color:#fff;font-size:1.9rem;" class="fade-in">Siap memulai misi? 🌿</h2>
       <p style="color:#DCEFDF;margin-top:10px;" class="fade-in">Yuk mulai dari Peta Konsep atau langsung ke halaman Materi &amp; Misi.</p>
       <div style="margin-top:22px;" class="fade-in">
-        <button class="btn btn-coral" onclick="go('materi')">MULAI BELAJAR</button>
+        <button class="btn btn-coral" onclick="go('pilihan')">MULAI BELAJAR</button>
       </div>
     </div>
   </section>
@@ -1043,10 +1121,10 @@ function misiCardsHTML(){
       <button class="btn btn-primary btn-sm" onclick="${onclick}">Mulai Misi →</button>
     </div>`;
   return `<div class="misi-grid">
-    ${mk('01','🌱','Unsur-Unsur Aljabar','Kenali variabel, koefisien, konstanta, dan suku.',u,"go('misi-unsur')")}
-    ${mk('02','♻️','Operasi Aljabar','Hitung dan sederhanakan bentuk aljabar.',o,"go('misi-operasi')")}
-    ${mk('03','💚','Sifat Aljabar','Temukan komutatif, asosiatif, dan distributif.',s,"go('misi-sifat','1')")}
-    ${mk('04','🌍','Pemodelan','Ubah masalah nyata menjadi model aljabar.',p,"go('misi-pemodelan')")}
+    ${mk('01','🌱','Unsur-unsur Aljabar','Taman Hijau Kelasku — temukan unsur aljabar lewat kegiatan menanam bibit.',u,"go('misi-unsur')")}
+    ${mk('02','♻️','Operasi Aljabar','Kebun Vertikal — operasi aljabar lewat botol plastik bekas.',o,"go('misi-operasi')")}
+    ${mk('03','💚','Sifat Aljabar','Kotak Pilah Sampah Mini — Temukan komutatif, asosiatif, dan distributif.',s,"go('misi-sifat','1')")}
+    ${mk('04','🌍','Pemodelan','Masalah Cinta Lingkungan — Ubah masalah nyata menjadi model aljabar.',p,"go('misi-pemodelan')")}
   </div>`;
 }
 
@@ -1065,19 +1143,143 @@ function glosariumHTML(limit){
 function toggleGlos(i){ document.getElementById('glos-'+i).classList.toggle('open'); }
 
 /* ============ PAGE: MATERI & MISI HUB ============ */
-function pageMateri(){
+/* ============ PAGE: PILIHAN (setelah Mulai Belajar) ============ */
+function pagePilihan(){
   return `
   <div class="page-hero">
     <div class="wrap">
-      <div class="breadcrumb"><button onclick="go('beranda')">Beranda</button> / <span>Materi &amp; Misi</span></div>
+      <div class="breadcrumb"><button onclick="go('beranda')">Beranda</button> / <span>Mulai Belajar</span></div>
       <span class="badge">Kelas VII</span> <span class="badge coral">Cinta Lingkungan</span>
-      <h1 style="margin-top:14px;">Materi &amp; Misi</h1>
-      <p class="sub">Pilih salah satu misi untuk mempelajari materi lalu mengerjakan aktivitas interaktifnya. Progresmu akan otomatis tersimpan di perangkat ini.</p>
+      <h1 style="margin-top:14px;">Mau mulai dari mana?</h1>
+      <p class="sub">Pilih salah satu jalur belajar di bawah ini. Kamu bisa bolak-balik kapan saja lewat menu.</p>
     </div>
   </div>
   <section>
     <div class="wrap">
-      ${misiCardsHTML()}
+      <div class="two-col" style="max-width:920px;margin:0 auto;gap:26px;">
+        <div class="card fade-in" style="text-align:center;padding:38px 28px;cursor:pointer;" onclick="go('materi-peta')">
+          <div style="font-size:3rem;">📘</div>
+          <h3 style="font-size:1.4rem;margin-top:10px;">Materi</h3>
+          <p style="color:#5A6B65;margin-top:8px;">Baca penjelasan konsep aljabar secara runtut: unsur, operasi, dan sifat — lengkap dengan contoh soal dan jawaban.</p>
+          <button class="btn btn-primary" style="margin-top:18px;" onclick="event.stopPropagation();go('materi-peta')">Buka Materi →</button>
+        </div>
+        <div class="card fade-in" style="text-align:center;padding:38px 28px;cursor:pointer;" onclick="go('misi-peta')">
+          <div style="font-size:3rem;">🧩</div>
+          <h3 style="font-size:1.4rem;margin-top:10px;">Misi Pemecahan Masalah</h3>
+          <p style="color:#5A6B65;margin-top:8px;">Selesaikan proyek dan misi interaktif berbasis masalah nyata cinta lingkungan — dari kebun sekolah sampai bank sampah.</p>
+          <button class="btn btn-coral" style="margin-top:18px;" onclick="event.stopPropagation();go('misi-peta')">Mulai Misi →</button>
+        </div>
+      </div>
+    </div>
+  </section>
+  `;
+}
+
+/* ============ PAGE: PETUNJUK PENGGUNAAN ============ */
+function pagePetunjuk(){
+  return `
+  <div class="page-hero">
+    <div class="wrap">
+      <div class="breadcrumb"><button onclick="go('beranda')">Beranda</button> / <span>Petunjuk Penggunaan</span></div>
+      <h1>📋 Petunjuk Penggunaan</h1>
+      <p class="sub">Yuk kenali dulu cara pakai website Aljabar Cinta supaya belajarnya makin lancar.</p>
+    </div>
+  </div>
+  <section>
+    <div class="wrap" style="max-width:880px;">
+      <div class="card fade-in">
+        <h3>🧭 1. Dua Jalur Belajar</h3>
+        <p>Klik tombol <b>"Mulai Belajar"</b> di navbar untuk memilih salah satu dari dua jalur:</p>
+        <ul>
+          <li><b>📘 Materi</b> — penjelasan konsep aljabar secara runtut, cocok dibaca dulu sebelum mengerjakan misi.</li>
+          <li><b>🧩 Misi Pemecahan Masalah</b> — proyek dan misi interaktif berbasis cerita cinta lingkungan.</li>
+        </ul>
+      </div>
+      <div class="card fade-in">
+        <h3>🗺️ 2. Peta Konsep</h3>
+        <p>Di dalam Materi maupun Misi, kamu akan bertemu Peta Konsep berbentuk kartu: <b>Unsur-Unsur Aljabar</b>, <b>Operasi Aljabar</b>, dan <b>Sifat Aljabar</b>. Klik salah satu kartu untuk masuk ke halamannya.</p>
+      </div>
+      <div class="card fade-in">
+        <h3>✏️ 3. Mengerjakan Aktivitas</h3>
+        <p>Setiap misi berisi pertanyaan dengan kolom isian, pilihan ganda, atau kotak centang. Setelah menjawab, klik tombol <b>CEK JAWABAN</b>. Jika belum tepat, akan muncul <b>Petunjuk 💡</b> — coba lagi sebelum melihat pembahasan.</p>
+      </div>
+      <div class="card fade-in">
+        <h3>💾 4. Progress Otomatis Tersimpan</h3>
+        <p>Progres belajarmu (persentase di bagian atas halaman) tersimpan otomatis di perangkat yang kamu pakai, walau halaman ditutup atau di-refresh. Tidak perlu login.</p>
+      </div>
+      <div class="card fade-in">
+        <h3>🧑‍🤝‍🧑 5. Kerja Kelompok</h3>
+        <p>Sebagian besar Misi Pemecahan Masalah dirancang untuk dikerjakan berkelompok (4–5 siswa). Diskusikan jawaban bersama sebelum mengisi kolom jawaban.</p>
+      </div>
+      <div class="card fade-in" style="background:var(--green-pale);border:none;">
+        <h4>🌿 Selamat belajar!</h4>
+        <p>"Matematika membantu kita memahami masalah, dan kepedulian membantu kita membuat perubahan."</p>
+      </div>
+    </div>
+  </section>
+  `;
+}
+
+/* ============ PAGE: PETA MATERI ============ */
+function pageMateriPeta(){
+  return `
+  <div class="page-hero">
+    <div class="wrap">
+      <div class="breadcrumb"><button onclick="go('beranda')">Beranda</button> / <button onclick="go('pilihan')">Mulai Belajar</button> / <span>Materi</span></div>
+      <span class="badge blue">Materi</span>
+      <h1 style="margin-top:14px;">PETA KONSEP ALJABAR</h1>
+      <p class="sub">Klik salah satu bagian untuk membaca materinya.</p>
+    </div>
+  </div>
+  <section>
+    <div class="wrap">
+      <div class="peta-map fade-in">
+        <svg class="connectors" viewBox="0 0 940 560" preserveAspectRatio="none">
+          <defs>
+            <marker id="arrowIn2" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+              <path d="M0,0 L8,4 L0,8 Z" fill="#173B4C"/>
+            </marker>
+          </defs>
+          <path d="M330,110 H420 V140" stroke="#173B4C" stroke-width="3" fill="none" marker-end="url(#arrowIn2)"/>
+          <path d="M610,110 H520 V140" stroke="#173B4C" stroke-width="3" fill="none" marker-end="url(#arrowIn2)"/>
+          <path d="M330,450 H420 V420" stroke="#173B4C" stroke-width="3" fill="none" marker-end="url(#arrowIn2)"/>
+        </svg>
+        <div class="peta-map-grid">
+          <div class="peta-cell-tl">
+            <div class="peta-corner c-green" tabindex="0" onclick="go('materi-unsur')" onkeypress="if(event.key==='Enter')go('materi-unsur')">
+              <div class="peta-circle bg-green">𝑥</div>
+              <h4 style="color:#2E7D4F;">Unsur-Unsur Aljabar</h4>
+              <div class="underline-dots" style="color:#2E7D4F;"></div>
+              <p>variabel, koefisien, konstanta, dan suku</p>
+              <div class="go" style="color:#2E7D4F;">Baca Materi →</div>
+            </div>
+          </div>
+          <div class="peta-cell-tr">
+            <div class="peta-corner c-orange" tabindex="0" onclick="go('materi-operasi')" onkeypress="if(event.key==='Enter')go('materi-operasi')">
+              <div class="peta-circle bg-orange">+−</div>
+              <h4 style="color:#B8720C;">Operasi Aljabar</h4>
+              <div class="underline-dots" style="color:#B8720C;"></div>
+              <p>penjumlahan, pengurangan, perkalian, dan pembagian</p>
+              <div class="go" style="color:#B8720C;">Baca Materi →</div>
+            </div>
+          </div>
+          <div class="peta-center-cell">
+            <div class="peta-center-box">
+              <div class="display">BENTUK<br>ALJABAR</div>
+            </div>
+          </div>
+          <div class="peta-cell-bl">
+            <div class="peta-corner c-purple" tabindex="0" onclick="go('materi-sifat')" onkeypress="if(event.key==='Enter')go('materi-sifat')">
+              <div class="peta-circle bg-purple">⚖️</div>
+              <h4 style="color:#7A4FB0;">Sifat Aljabar</h4>
+              <div class="underline-dots" style="color:#7A4FB0;"></div>
+              <p>komutatif, asosiatif, dan distributif</p>
+              <div class="go" style="color:#7A4FB0;">Baca Materi →</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
     </div>
   </section>
   <section style="background:var(--white);">
@@ -1087,6 +1289,80 @@ function pageMateri(){
         <h2>Semua istilah penting</h2>
       </div>
       ${glosariumHTML(null)}
+    </div>
+  </section>
+  `;
+}
+
+/* ============ PAGE: PETA MISI PEMECAHAN MASALAH ============ */
+function pageMisiPeta(){
+  return `
+  <div class="page-hero">
+    <div class="wrap">
+      <div class="breadcrumb"><button onclick="go('beranda')">Beranda</button> / <button onclick="go('pilihan')">Mulai Belajar</button> / <span>Misi Pemecahan Masalah</span></div>
+      <span class="badge coral">Misi Pemecahan Masalah</span>
+      <h1 style="margin-top:14px;">PETA KONSEP ALJABAR</h1>
+      <p class="sub">Klik salah satu bagian untuk memulai proyek/misinya.</p>
+    </div>
+  </div>
+  <section>
+    <div class="wrap">
+      <div class="peta-map fade-in">
+        <svg class="connectors" viewBox="0 0 940 560" preserveAspectRatio="none">
+          <defs>
+            <marker id="arrowIn3" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+              <path d="M0,0 L8,4 L0,8 Z" fill="#173B4C"/>
+            </marker>
+          </defs>
+          <path d="M330,110 H420 V140" stroke="#173B4C" stroke-width="3" fill="none" marker-end="url(#arrowIn3)"/>
+          <path d="M610,110 H520 V140" stroke="#173B4C" stroke-width="3" fill="none" marker-end="url(#arrowIn3)"/>
+          <path d="M330,450 H420 V420" stroke="#173B4C" stroke-width="3" fill="none" marker-end="url(#arrowIn3)"/>
+          <path d="M610,450 H520 V420" stroke="#173B4C" stroke-width="3" fill="none" marker-end="url(#arrowIn3)"/>
+        </svg>
+        <div class="peta-map-grid">
+          <div class="peta-cell-tl">
+            <div class="peta-corner c-green" tabindex="0" onclick="go('misi-unsur')" onkeypress="if(event.key==='Enter')go('misi-unsur')">
+              <div class="peta-circle bg-green">🌱</div>
+              <h4 style="color:#2E7D4F;">Taman Hijau Kelasku</h4>
+              <div class="underline-dots" style="color:#2E7D4F;"></div>
+              <p>Proyek Eco Algebra — Unsur-Unsur Aljabar</p>
+              <div class="go" style="color:#2E7D4F;">Mulai Misi →</div>
+            </div>
+          </div>
+          <div class="peta-cell-tr">
+            <div class="peta-corner c-orange" tabindex="0" onclick="go('misi-operasi')" onkeypress="if(event.key==='Enter')go('misi-operasi')">
+              <div class="peta-circle bg-orange">♻️</div>
+              <h4 style="color:#B8720C;">Kebun Vertikal</h4>
+              <div class="underline-dots" style="color:#B8720C;"></div>
+              <p>Proyek Eco Algebra — Operasi Aljabar</p>
+              <div class="go" style="color:#B8720C;">Mulai Misi →</div>
+            </div>
+          </div>
+          <div class="peta-center-cell">
+            <div class="peta-center-box">
+              <div class="display">MISI<br>PEMECAHAN<br>MASALAH</div>
+            </div>
+          </div>
+          <div class="peta-cell-bl">
+            <div class="peta-corner c-purple" tabindex="0" onclick="go('misi-sifat','1')" onkeypress="if(event.key==='Enter')go('misi-sifat','1')">
+              <div class="peta-circle bg-purple">🗑️</div>
+              <h4 style="color:#7A4FB0;">Kotak Pilah Sampah Mini</h4>
+              <div class="underline-dots" style="color:#7A4FB0;"></div>
+              <p>komutatif, asosiatif, dan distributif</p>
+              <div class="go" style="color:#7A4FB0;">Mulai Misi →</div>
+            </div>
+          </div>
+          <div class="peta-cell-br">
+            <div class="peta-corner c-blue" tabindex="0" onclick="go('misi-pemodelan')" onkeypress="if(event.key==='Enter')go('misi-pemodelan')">
+              <div class="peta-circle bg-blue">🌍</div>
+              <h4 style="color:#2E6E96;">Masalah Cinta Lingkungan</h4>
+              <div class="underline-dots" style="color:#2E6E96;"></div>
+              <p>mengubah masalah kontekstual ke bentuk aljabar</p>
+              <div class="go" style="color:#2E6E96;">Mulai Misi →</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
   `;
@@ -1119,116 +1395,70 @@ function pageProfil(){
 }
 
 /* helper: breadcrumb + tracker + back button block for misi pages */
-function misiHeader({title, badge, sub, breadcrumbLast, backHash}){
+function misiHeader({title, badge, sub, breadcrumbLast, backHash, backLabel}){
   return `
   <div class="page-hero">
     <div class="wrap">
       <div class="breadcrumb">
-        <button onclick="go('beranda')">Beranda</button> / <button onclick="go('materi')">Materi &amp; Misi</button> / <span>${breadcrumbLast}</span>
+        <button onclick="go('beranda')">Beranda</button> / <button onclick="go('misi-peta')">Misi Pemecahan Masalah</button> / <span>${breadcrumbLast}</span>
       </div>
       <span class="badge">Kelas VII</span> <span class="badge coral">Misi</span> ${badge||''}
       <h1 style="margin-top:14px;">${title}</h1>
       <p class="sub">${sub}</p>
-      <div class="back-row"><button class="btn btn-outline btn-sm" onclick="go('${backHash||'materi'}')">← Kembali ke Materi &amp; Misi</button></div>
+      <div class="back-row"><button class="btn btn-outline btn-sm" onclick="go('${backHash||'misi-peta'}')">← ${backLabel||'Kembali ke Peta Misi'}</button></div>
+    </div>
+  </div>`;
+}
+/* helper serupa untuk halaman materi */
+function materiHeader({title, badge, sub, breadcrumbLast}){
+  return `
+  <div class="page-hero">
+    <div class="wrap">
+      <div class="breadcrumb">
+        <button onclick="go('beranda')">Beranda</button> / <button onclick="go('materi-peta')">Materi</button> / <span>${breadcrumbLast}</span>
+      </div>
+      <span class="badge">Kelas VII</span> <span class="badge blue">Materi</span> ${badge||''}
+      <h1 style="margin-top:14px;">${title}</h1>
+      <p class="sub">${sub}</p>
+      <div class="back-row"><button class="btn btn-outline btn-sm" onclick="go('materi-peta')">← Kembali ke Peta Materi</button></div>
     </div>
   </div>`;
 }
 
 /* ============ PAGE: MISI UNSUR ============ */
-function pageUnsur(){
+function pageMateriUnsur(){
   return `
-  ${misiHeader({title:"🌱 Misi Unsur-Unsur Aljabar", sub:"Kenali variabel, koefisien, konstanta, dan suku melalui pola kantong sampah.", breadcrumbLast:"Misi Unsur"})}
+  ${materiHeader({title:"🌱 Materi: Unsur-Unsur Aljabar", sub:"Kenali variabel, koefisien, konstanta, dan suku melalui contoh bentuk aljabar.", breadcrumbLast:"Unsur-Unsur Aljabar"})}
   <section>
     <div class="wrap" style="max-width:880px;">
-      ${illustrationCard(trashBagsSVG(), "Pola kantong sampah bertambah 3 tiap tahap — dari sinilah rumus Uₙ = 3n − 1 ditemukan.")}
+      ${illustrationCard(trashBagsSVG(), "Pola kantong sampah bertambah 3 tiap tahap — contoh konteks untuk mengenali unsur bentuk aljabar.")}
       <div class="card fade-in">
-        <h3>📖 Apa itu Aljabar?</h3>
-        <p>Aljabar merupakan cabang matematika yang menggunakan <b>huruf, angka, dan simbol operasi</b> untuk menyatakan suatu hubungan atau permasalahan matematika. Huruf yang digunakan disebut <b>variabel</b>, sedangkan angka dan simbol menunjukkan hubungan antarvariabel.</p>
-        <p>Dalam kehidupan sehari-hari, aljabar digunakan untuk memodelkan berbagai situasi nyata, misalnya menghitung jumlah pohon yang akan ditanam, jumlah sampah yang berhasil dikurangi, atau memperkirakan kebutuhan bibit tanaman.</p>
+        <h3>📖 Pengertian Unsur-Unsur Aljabar</h3>
+        <p>Dalam bentuk aljabar terdapat variabel, koefisien, konstanta, dan suku. Perhatikan bentuk <b>3n − 1</b>.</p>
+        <div class="formula light"><b>n</b> → Variabel &nbsp; | &nbsp; <b>3</b> → Koefisien &nbsp; | &nbsp; <b>−1</b> → Konstanta &nbsp; | &nbsp; <b>3n</b> dan <b>−1</b> → Suku</div>
       </div>
-
       <div class="card fade-in">
-        <h3>🗑️ Ilustrasi: Pola Kantong Sampah</h3>
-        <p>Kumpulkan sampah-sampah kering yang terdapat di halaman sekolah. Sampah tersebut selanjutnya dimasukkan ke dalam kantong-kantong plastik yang telah disiapkan. Setiap tahap, pola bertambah 3 kantong.</p>
-        <table class="matter">
-          <tr><th>Pola ke-</th><th>Banyak Kantong</th><th>Cara Hitung</th></tr>
-          <tr><td>1</td><td>2</td><td>3(1) − 1</td></tr>
-          <tr><td>2</td><td>5</td><td>3(2) − 1</td></tr>
-          <tr><td>3</td><td>8</td><td>3(3) − 1</td></tr>
-          <tr><td>4</td><td>11</td><td>3(4) − 1</td></tr>
-          <tr><td>5</td><td>14</td><td>3(5) − 1</td></tr>
-          <tr><td>...</td><td>...</td><td>...</td></tr>
-        </table>
-        <p>Setiap pola bertambah 3 kantong dan pola pertama dimulai dengan 2 kantong. Jika kita fokuskan pada cara hitungnya, ada angka yang nilainya <b>tetap</b> dan angka yang nilainya <b>berubah</b>. Rumus untuk pola ke-n adalah:</p>
-        <div class="formula">Uₙ = 3n − 1</div>
-        <p>Huruf <i>n</i> mewakili pola ke berapa yang ingin dihitung hasilnya.</p>
+        <h3>✏️ Contoh Soal 1</h3>
+        <p>Perhatikan bentuk aljabar <b>5x + 8</b>. Tentukan koefisien dari <b>x</b>.</p>
+        <div class="formula">Jawaban: <b>5</b></div>
+        <p>Karena 5 merupakan bilangan yang menjadi faktor pengali variabel x.</p>
       </div>
-
       <div class="card fade-in">
-        <h3>🧩 Unsur-Unsur Aljabar pada 3n − 1</h3>
-        <div class="two-col">
-          <div class="formula light">
-            <b>n</b> → Variabel<br>
-            <b>3</b> → Koefisien<br>
-            <b>−1</b> → Konstanta<br>
-            <b>3n</b> dan <b>−1</b> → Suku
-          </div>
-          <div>
-            <p><b>Suku</b> adalah bilangan, variabel, atau perkalian antara bilangan dan variabel yang dipisahkan dengan operasi penjumlahan/pengurangan.</p>
-            <p><b>Koefisien</b> adalah angka sebagai faktor pengali dari suatu variabel.</p>
-            <p><b>Variabel</b> adalah huruf/simbol sebagai kuantitas tertentu yang nilainya berubah-ubah atau belum diketahui.</p>
-            <p><b>Konstanta</b> adalah bilangan yang nilainya tetap.</p>
-          </div>
-        </div>
+        <h3>✏️ Contoh Soal 2</h3>
+        <p>Perhatikan bentuk aljabar <b>7p − 4q + 9</b>. Tentukan koefisien dari <b>q</b>.</p>
+        <div class="formula">Jawaban: <b>−4</b></div>
       </div>
-
       <div class="card fade-in">
-        <h3>✏️ Aktivitas: Amati Pola Kantong Sampah</h3>
-        <p>Perhatikan kembali pola kantong sampah di atas (Uₙ = 3n − 1).</p>
-        <label class="field-label">Berapa banyak kantong pada pola ke-6?</label>
-        <input type="number" id="u-q1" placeholder="Masukkan jawaban angka...">
-        <button class="btn btn-primary btn-sm" style="margin-top:12px;" onclick="checkUnsurQ1()">✔ CEK JAWABAN</button>
-        <div class="feedback" id="u-fb1"></div>
-        <div class="hint-box" id="u-hint1">💡 Petunjuk: Substitusikan n = 6 ke rumus Uₙ = 3n − 1.</div>
+        <h3>✏️ Contoh Soal 3</h3>
+        <p>Jika bentuk aljabar <b>2x + 5</b> dan nilai <b>x = 3</b>, tentukan nilainya.</p>
+        <div class="formula">Jawaban: 2(3) + 5 = <b>11</b></div>
       </div>
-
-      <div class="card fade-in">
-        <h3>🔤 Aktivitas: Identifikasi Unsur Aljabar</h3>
-        <p>Perhatikan bentuk aljabar berikut: <b>5x + 8</b>. Manakah yang merupakan koefisien dari x?</p>
-        <div class="mc-options" id="u-mc">
-          <label class="mc-option"><input type="radio" name="u-mc-opt" value="a"> 5</label>
-          <label class="mc-option"><input type="radio" name="u-mc-opt" value="b"> 8</label>
-          <label class="mc-option"><input type="radio" name="u-mc-opt" value="c"> x</label>
-          <label class="mc-option"><input type="radio" name="u-mc-opt" value="d"> 5x</label>
-        </div>
-        <button class="btn btn-primary btn-sm" style="margin-top:12px;" onclick="checkUnsurQ2()">✔ CEK JAWABAN</button>
-        <div class="feedback" id="u-fb2"></div>
-        <div class="hint-box" id="u-hint2">💡 Petunjuk: Koefisien adalah angka pengali di depan variabel.</div>
-      </div>
-
-      <div class="card fade-in">
-        <h3>📐 Latihan Tambahan (Bebas Konteks)</h3>
-        <p>Sebelum lanjut, latihan dulu dengan bentuk aljabar biasa — tanpa cerita — supaya konsepnya makin melekat.</p>
-        <div class="task-item">
-          <p><span class="task-num">1</span>Perhatikan bentuk aljabar <b>7p − 4q + 9</b>. Berapa koefisien dari q?</p>
-          <input type="text" id="u-q3" placeholder="Contoh: -4">
-        </div>
-        <div class="task-item">
-          <p><span class="task-num">2</span>Jika bentuk aljabar <b>2x + 5</b> dan nilai x = 3, berapa nilai bentuk aljabar tersebut?</p>
-          <input type="number" id="u-q4" placeholder="Masukkan angka...">
-        </div>
-        <button class="btn btn-primary btn-sm" onclick="checkUnsurDrill()">✔ CEK SEMUA JAWABAN</button>
-        <div class="feedback" id="u-fb-drill"></div>
-        <div class="hint-box" id="u-hint-drill">💡 Petunjuk: koefisien q pada 7p − 4q + 9 adalah angka di depan q (termasuk tandanya). Untuk soal kedua, ganti x dengan 3 lalu hitung.</div>
-      </div>
-
       <div class="step-actions fade-in">
-        <button class="btn btn-outline" onclick="go('materi')">← Materi &amp; Misi</button>
-        <button class="btn btn-primary" onclick="go('misi-operasi')">Lanjut ke Misi Operasi →</button>
+        <button class="btn btn-outline" onclick="go('materi-peta')">← Peta Materi</button>
+        <button class="btn btn-primary" onclick="go('materi-operasi')">Lanjut ke Operasi Aljabar →</button>
       </div>
     </div>
-  </section>
-  `;
+  </section>`;
 }
 
 function checkUnsurDrill(){
@@ -1241,8 +1471,8 @@ function checkUnsurDrill(){
   if(ok1 && ok2){
     fb.className='feedback ok show'; fb.innerHTML='<span class="bounce-check">✓</span> Semua jawaban tepat! Konsep unsur aljabar kamu makin kuat 💪';
     hint.classList.remove('show');
-    setMisiStep('unsur','drill',true);
-    showToast('Progress Misi Unsur tersimpan!');
+    setMisiStep('materiUnsur','drill',true);
+    showToast('Progress Materi tersimpan!');
   } else {
     fb.className='feedback bad show'; fb.textContent='Ada yang belum tepat. Coba periksa lagi kedua jawabanmu.';
     hint.classList.add('show');
@@ -1256,8 +1486,8 @@ function checkUnsurQ1(){
   if(val === 17){
     fb.className='feedback ok show'; fb.innerHTML='<span class="bounce-check">✓</span> Hebat! Kamu berhasil menemukan polanya 🌱';
     hint.classList.remove('show');
-    setMisiStep('unsur','q1',true);
-    showToast('Progress Misi Unsur tersimpan!');
+    setMisiStep('materiUnsur','q1',true);
+    showToast('Progress Materi tersimpan!');
   } else {
     fb.className='feedback bad show'; fb.textContent='Belum tepat. Coba perhatikan bagian yang berubah dan bagian yang tetap.';
     hint.classList.add('show');
@@ -1271,92 +1501,53 @@ function checkUnsurQ2(){
   if(sel.value==='a'){
     fb.className='feedback ok show'; fb.innerHTML='<span class="bounce-check">✓</span> Benar! 5 adalah koefisien dari x.';
     hint.classList.remove('show');
-    setMisiStep('unsur','q2',true);
-    showToast('Progress Misi Unsur tersimpan!');
+    setMisiStep('materiUnsur','q2',true);
+    showToast('Progress Materi tersimpan!');
   } else {
     fb.className='feedback bad show'; fb.textContent='Belum tepat. Coba perhatikan kembali bagian yang berubah dan bagian yang tetap.';
     hint.classList.add('show');
   }
 }
 
-/* ============ PAGE: MISI OPERASI ============ */
-function pageOperasi(){
+/* ============ PAGE: MATERI OPERASI ============ */
+function pageMateriOperasi(){
   return `
-  ${misiHeader({title:"♻️ Misi Operasi Aljabar", sub:"Hitung dan sederhanakan bentuk aljabar melalui konteks penghijauan sekolah.", breadcrumbLast:"Misi Operasi"})}
+  ${materiHeader({title:"♻️ Materi: Operasi Aljabar", sub:"Hitung dan sederhanakan bentuk aljabar melalui contoh soal.", breadcrumbLast:"Operasi Aljabar"})}
   <section>
     <div class="wrap" style="max-width:880px;">
-      ${illustrationCard(treePlantingSVG(), "Penghijauan sekolah: menanam pohon dan menghitung kebutuhan pupuk kompos dengan aljabar.")}
+      ${illustrationCard(treePlantingSVG(), "Contoh operasi aljabar dalam konteks penghijauan sekolah.")}
       <div class="card fade-in">
         <h3>➕➖ Penjumlahan dan Pengurangan</h3>
-        <p>Penjumlahan dan pengurangan bentuk aljabar hanya dapat dilakukan pada suku-suku yang <b>sejenis</b> (variabel dan pangkatnya sama), dengan cara menjumlahkan/mengurangkan koefisiennya. Suku yang tidak sejenis tetap ditulis apa adanya.</p>
-        <p><b>Ilustrasi:</b> Program penghijauan sekolah dilakukan dua kali. Pada kegiatan 1 ditanam (4a + 3) pohon, kegiatan 2 ditanam (2a − 1) pohon. Variabel a adalah banyak kelas yang berpartisipasi.</p>
-        <label class="field-label">Berapa jumlah pohon yang ditanam pada kedua kegiatan? (4a + 3) + (2a − 1) = ...</label>
-        <input type="text" id="o-q1" placeholder="Contoh: 6a + 2">
-        <button class="btn btn-primary btn-sm" style="margin-top:12px;" onclick="checkOperasiQ1()">✔ CEK JAWABAN</button>
-        <div class="feedback" id="o-fb1"></div>
-        <div class="hint-box" id="o-hint1">💡 Petunjuk: Jumlahkan suku sejenis (4a dengan 2a), lalu jumlahkan konstanta (3 dengan −1).</div>
-        <button class="btn btn-outline btn-sm" style="margin-top:10px;" onclick="togglePembahasan('o-pemb1','o-btn1')" id="o-btn1">LIHAT PEMBAHASAN</button>
-        <div class="pembahasan" id="o-pemb1">
-          <p>(4a + 3) + (2a − 1) = (4a + 2a) + (3 − 1) = <b>6a + 2</b></p>
-        </div>
+        <p>Penjumlahan dan pengurangan dilakukan pada suku-suku sejenis.</p>
+        <div class="formula">(4a + 3) + (2a − 1) = <b>6a + 2</b></div>
       </div>
-
       <div class="card fade-in">
         <h3>✖️ Perkalian</h3>
-        <p>Perkalian bentuk aljabar dilakukan dengan mengalikan setiap suku sesuai aturan perkalian, menggunakan sifat asosiatif (ab)c = a(bc), komutatif ab = ba, dan distributif a(b+c) = ab + ac.</p>
-        <p><b>Ilustrasi:</b> Setiap pohon membutuhkan 2 kg pupuk kompos. Jika banyak pohon dinyatakan (3n + 2), maka total kompos adalah 2(3n + 2).</p>
-        <label class="field-label">Hitunglah: 2(3n + 2) = ...</label>
-        <input type="text" id="o-q2" placeholder="Contoh: 6n + 4">
-        <button class="btn btn-primary btn-sm" style="margin-top:12px;" onclick="checkOperasiQ2()">✔ CEK JAWABAN</button>
-        <div class="feedback" id="o-fb2"></div>
-        <div class="hint-box" id="o-hint2">💡 Petunjuk: Kalikan 2 dengan setiap suku di dalam kurung (sifat distributif).</div>
-        <button class="btn btn-outline btn-sm" style="margin-top:10px;" onclick="togglePembahasan('o-pemb2','o-btn2')" id="o-btn2">LIHAT PEMBAHASAN</button>
-        <div class="pembahasan" id="o-pemb2">
-          <p>2(3n + 2) = (2×3n) + (2×2) = <b>6n + 4</b></p>
-          <p style="margin-top:10px;">Contoh lain: taman sekolah persegi panjang, panjang (a+6) m dan lebar (a+3) m. Luas = (a+6)(a+3) = a² + 3a + 6a + 18 = a² + 9a + 18.</p>
-        </div>
+        <p>Gunakan sifat distributif untuk mengalikan setiap suku.</p>
+        <div class="formula">2(3n + 2) = <b>6n + 4</b></div>
       </div>
-
       <div class="card fade-in">
         <h3>➗ Pembagian</h3>
-        <p>Pembagian suku satu oleh suku satu dilakukan dengan membagi koefisien dengan koefisien, dan mengurangi pangkat variabel yang sama. Pembagian suku banyak oleh suku satu dilakukan dengan membagi setiap sukunya.</p>
-        <p><b>Ilustrasi:</b> Total kebutuhan kompos taman sekolah dinyatakan (12b + 9) kg, dibagi rata kepada 3 kelompok petugas taman.</p>
-        <label class="field-label">Berapa kompos yang diterima setiap kelompok? (12b + 9) : 3 = ...</label>
-        <input type="text" id="o-q3" placeholder="Contoh: 4b + 3">
-        <button class="btn btn-primary btn-sm" style="margin-top:12px;" onclick="checkOperasiQ3()">✔ CEK JAWABAN</button>
-        <div class="feedback" id="o-fb3"></div>
-        <div class="hint-box" id="o-hint3">💡 Petunjuk: Bagi setiap suku (12b dan 9) dengan 3 secara terpisah.</div>
-        <button class="btn btn-outline btn-sm" style="margin-top:10px;" onclick="togglePembahasan('o-pemb3','o-btn3')" id="o-btn3">LIHAT PEMBAHASAN</button>
-        <div class="pembahasan" id="o-pemb3">
-          <p>(12b + 9) : 3 = (12b:3) + (9:3) = <b>4b + 3</b></p>
-          <p style="margin-top:10px;">Contoh lain: 8b² : 2b = 4b, dan (6a² + 9a) : 3a = (6a²:3a) + (9a:3a) = 2a + 3.</p>
-        </div>
+        <p>Bagi setiap suku dengan bilangan pembagi.</p>
+        <div class="formula">(12b + 9) : 3 = <b>4b + 3</b></div>
       </div>
-
       <div class="card fade-in">
-        <h3>📋 Rangkuman Operasi Aljabar</h3>
+        <h3>📋 Contoh Soal Tambahan</h3>
         <table class="matter" style="text-align:left;">
-          <tr><th>Operasi</th><th>Aturan Singkat</th><th>Contoh</th></tr>
-          <tr><td>Penjumlahan</td><td>Jumlahkan koefisien suku sejenis; suku tidak sejenis ditulis terpisah.</td><td>3b + 5a + 4b = 5a + 7b</td></tr>
-          <tr><td>Pengurangan</td><td>Kurangkan koefisien suku sejenis; buka kurung dengan mengubah tanda.</td><td>(7p+5) − (3p+2) = 4p+3</td></tr>
-          <tr><td>Perkalian</td><td>Gunakan sifat distributif pada setiap suku.</td><td>2x(3x+5) = 6x² + 10x</td></tr>
-          <tr><td>Pembagian</td><td>Bagi koefisien dan kurangi pangkat, atau bagi tiap suku.</td><td>(6x²+9x):3x = 2x+3</td></tr>
+          <tr><th>Soal</th><th>Jawaban</th></tr>
+          <tr><td>3x + 5y − x + 2y</td><td><b>2x + 7y</b></td></tr>
+          <tr><td>(5p − 3) + (2p + 6)</td><td><b>7p + 3</b></td></tr>
+          <tr><td>4(2a − 3)</td><td><b>8a − 12</b></td></tr>
+          <tr><td>(10x + 15) : 5</td><td><b>2x + 3</b></td></tr>
         </table>
       </div>
-
-      <div class="card fade-in">
-        <h3>📐 Latihan Tambahan (Bebas Konteks)</h3>
-        <p>Yuk latihan menyederhanakan bentuk aljabar secara langsung, tanpa cerita.</p>
-        ${renderDrillOperasi()}
-      </div>
-
       <div class="step-actions fade-in">
-        <button class="btn btn-outline" onclick="go('misi-unsur')">← Misi Unsur</button>
-        <button class="btn btn-primary" onclick="go('misi-sifat','1')">Lanjut ke Misi Sifat →</button>
+        <button class="btn btn-outline" onclick="go('materi-unsur')">← Unsur-Unsur Aljabar</button>
+        <button class="btn btn-outline" onclick="go('materi-sifat')">Sifat Aljabar →</button>
+        <button class="btn btn-primary" onclick="go('materi-peta')">Kembali ke Peta Materi →</button>
       </div>
     </div>
-  </section>
-  `;
+  </section>`;
 }
 function togglePembahasan(id, btnId){
   document.getElementById(id).classList.toggle('show');
@@ -1405,19 +1596,19 @@ function algEquals(userAnswer, correctAnswer){
 function checkOperasiQ1(){
   const v = document.getElementById('o-q1').value;
   const fb=document.getElementById('o-fb1'), hint=document.getElementById('o-hint1');
-  if(algEquals(v,'6a+2')){ fb.className='feedback ok show'; fb.innerHTML='<span class="bounce-check">✓</span> Hebat! Jawaban kamu tepat 🌳'; hint.classList.remove('show'); setMisiStep('operasi','q1',true); showToast('Progress Misi Operasi tersimpan!'); }
+  if(algEquals(v,'6a+2')){ fb.className='feedback ok show'; fb.innerHTML='<span class="bounce-check">✓</span> Hebat! Jawaban kamu tepat 🌳'; hint.classList.remove('show'); setMisiStep('materiOperasi','q1',true); showToast('Progress Materi tersimpan!'); }
   else { fb.className='feedback bad show'; fb.textContent='Belum tepat. Coba jumlahkan suku sejenis (yang mengandung a) lalu suku konstanta.'; hint.classList.add('show'); }
 }
 function checkOperasiQ2(){
   const v = document.getElementById('o-q2').value;
   const fb=document.getElementById('o-fb2'), hint=document.getElementById('o-hint2');
-  if(algEquals(v,'6n+4')){ fb.className='feedback ok show'; fb.innerHTML='<span class="bounce-check">✓</span> Tepat sekali! 🌱'; hint.classList.remove('show'); setMisiStep('operasi','q2',true); showToast('Progress Misi Operasi tersimpan!'); }
+  if(algEquals(v,'6n+4')){ fb.className='feedback ok show'; fb.innerHTML='<span class="bounce-check">✓</span> Tepat sekali! 🌱'; hint.classList.remove('show'); setMisiStep('materiOperasi','q2',true); showToast('Progress Materi tersimpan!'); }
   else { fb.className='feedback bad show'; fb.textContent='Belum tepat. Coba kalikan 2 ke setiap suku di dalam kurung.'; hint.classList.add('show'); }
 }
 function checkOperasiQ3(){
   const v = document.getElementById('o-q3').value;
   const fb=document.getElementById('o-fb3'), hint=document.getElementById('o-hint3');
-  if(algEquals(v,'4b+3')){ fb.className='feedback ok show'; fb.innerHTML='<span class="bounce-check">✓</span> Kompos terbagi rata! 🌍'; hint.classList.remove('show'); setMisiStep('operasi','q3',true); showToast('Progress Misi Operasi tersimpan!'); }
+  if(algEquals(v,'4b+3')){ fb.className='feedback ok show'; fb.innerHTML='<span class="bounce-check">✓</span> Kompos terbagi rata! 🌍'; hint.classList.remove('show'); setMisiStep('materiOperasi','q3',true); showToast('Progress Materi tersimpan!'); }
   else { fb.className='feedback bad show'; fb.textContent='Belum tepat. Coba bagi tiap suku (12b dan 9) dengan 3 secara terpisah.'; hint.classList.add('show'); }
 }
 
@@ -1448,7 +1639,446 @@ function checkDrillOperasi(){
       fb.className='feedback bad show'; fb.textContent='Belum tepat, coba periksa lagi suku sejenisnya.';
     }
   });
-  if(allOk){ setMisiStep('operasi','drill',true); showToast('Latihan tambahan selesai! 🎉'); }
+  if(allOk){ setMisiStep('materiOperasi','drill',true); showToast('Latihan tambahan selesai! 🎉'); }
+}
+
+/* ============ PAGE: MATERI SIFAT ============ */
+function pageMateriSifat(){
+  return `
+  ${materiHeader({title:"⚖️ Materi: Sifat Aljabar", sub:"Kenali sifat komutatif, asosiatif, dan distributif melalui contoh soal.", breadcrumbLast:"Sifat Aljabar"})}
+  <section>
+    <div class="wrap" style="max-width:880px;">
+      <div class="card fade-in">
+        <h3>🔄 Sifat Komutatif</h3>
+        <p>Sifat komutatif menyatakan bahwa pertukaran urutan suku tidak mengubah hasil.</p>
+        <div class="formula">a + b = b + a</div>
+        <p><b>Contoh soal:</b> 3x + 5 = 5 + 3x</p>
+        <div class="formula light">Jawaban: <b>Benar</b>, karena urutan suku ditukar tetapi hasil tetap sama.</div>
+      </div>
+      <div class="card fade-in">
+        <h3>🧩 Sifat Asosiatif</h3>
+        <p>Sifat asosiatif menyatakan bahwa perubahan pengelompokan suku tidak mengubah hasil.</p>
+        <div class="formula">(a + b) + c = a + (b + c)</div>
+        <p><b>Contoh soal:</b> (x + 2) + 3 = x + (2 + 3)</p>
+        <div class="formula light">Jawaban: <b>x + 5</b></div>
+      </div>
+      <div class="card fade-in">
+        <h3>📐 Sifat Distributif</h3>
+        <p>Sifat distributif digunakan dengan mengalikan bilangan di luar kurung ke setiap suku di dalam kurung.</p>
+        <div class="formula">a(b + c) = ab + ac</div>
+        <p><b>Contoh soal:</b> 3(x + 4)</p>
+        <div class="formula light">Jawaban: <b>3x + 12</b></div>
+      </div>
+      <div class="card fade-in">
+        <h3>📋 Contoh Soal Gabungan</h3>
+        <p>Sederhanakan: <b>(x + 2) + (y + 3) + (x + y + 1)</b>.</p>
+        <div class="formula">Jawaban: <b>2x + 2y + 6</b></div>
+        <p>Suku sejenis dikumpulkan dengan memanfaatkan sifat komutatif dan asosiatif.</p>
+      </div>
+      <div class="step-actions fade-in">
+        <button class="btn btn-outline" onclick="go('materi-operasi')">← Operasi Aljabar</button>
+        <button class="btn btn-primary" onclick="go('materi-peta')">Kembali ke Peta Materi →</button>
+      </div>
+    </div>
+  </section>`;
+}
+
+/* ============ PAGE: MISI UNSUR (PROYEK ECO ALGEBRA — TAMAN HIJAU KELASKU) ============ */
+function misiUnsurTracker(current){
+  const labels = ["1. Variabel","2. Koefisien","3. Konstanta","4. Suku & Refleksi"];
+  return `<div class="tracker">${labels.map((l,i)=>`<div class="dot ${i+1<current?'done':i+1===current?'current':''}">${l}</div>`).join('')}</div>`;
+}
+function pageMisiUnsur(step){
+  step = step>=1 && step<=4 ? step : 1;
+  let body='';
+  if(step===1) body = misiUnsurPage1();
+  else if(step===2) body = misiUnsurPage2();
+  else if(step===3) body = misiUnsurPage3();
+  else body = misiUnsurPage4();
+  return `
+  ${misiHeader({title:"🌱 Proyek Eco Algebra — Taman Hijau Kelasku", badge:'<span class="badge blue">Unsur-Unsur Aljabar</span>', sub:"Materi: Unsur-Unsur Aljabar — Kelas VII SMP, kegiatan kelompok 4–5 siswa.", breadcrumbLast:"Taman Hijau Kelasku"})}
+  <section>
+    <div class="wrap" style="max-width:880px;">
+      ${misiUnsurTracker(step)}
+      ${body}
+    </div>
+  </section>`;
+}
+function misiUnsurIntro(){
+  return `
+  ${illustrationCard(potBibitSVG(), "Program 'Satu Kelompok, Tiga Bibit' — tiap kelompok menanam 3 bibit, sekolah sudah punya 2 bibit lebih dulu.")}
+  <div class="card fade-in">
+    <h3>🎯 Tujuan Proyek</h3>
+    <ul>
+      <li>Mengenali variabel, koefisien, konstanta, dan suku.</li>
+      <li>Menentukan unsur-unsur aljabar berdasarkan permasalahan nyata.</li>
+      <li>Menjelaskan arti setiap unsur aljabar dalam konteks lingkungan.</li>
+      <li>Menyusun bentuk aljabar berdasarkan informasi yang diperoleh.</li>
+      <li>Menghubungkan konsep aljabar dengan kegiatan menjaga lingkungan.</li>
+      <li>Bekerja sama dan bertanggung jawab dalam menyelesaikan masalah.</li>
+    </ul>
+    <div class="two-col" style="margin-top:14px;">
+      <div>
+        <h4>🧰 Alat dan Bahan</h4>
+        <ul><li>🪴 3 pot atau wadah bekas</li><li>🔤 Kartu huruf (x)</li><li>🔢 Kartu angka</li><li>🍃 Daun/benda kecil di lingkungan</li><li>✏️ Kertas dan alat tulis</li></ul>
+      </div>
+      <div>
+        <h4>🌿 Arti Model</h4>
+        <ul><li>(x) = jumlah kelompok siswa yang mengikuti kegiatan</li><li>3 = jumlah bibit yang ditanam tiap kelompok</li><li>2 = jumlah bibit yang telah tersedia sebelumnya</li></ul>
+      </div>
+    </div>
+  </div>
+  <div class="card fade-in">
+    <h3>📖 Cerita Masalah</h3>
+    <div class="story-box">
+      <p>Sekolah sedang melaksanakan program <b>"Satu Kelompok, Tiga Bibit"</b> untuk menghijaukan halaman sekolah. Setiap kelompok siswa yang mengikuti kegiatan membawa dan menanam <b>3 bibit tanaman</b>.</p>
+      <p>Sebelum kegiatan dimulai, sekolah telah memiliki <b>2 bibit tanaman</b> yang siap ditanam. Jika terdapat <b>(x) kelompok siswa</b> yang berpartisipasi, jumlah seluruh bibit yang akan ditanam dinyatakan dengan:</p>
+    </div>
+    <div class="formula">3x + 2</div>
+    <p>Perhatikan bentuk aljabar tersebut. Ada beberapa unsur penting yang harus kalian temukan di sepanjang 4 misi berikut ini.</p>
+  </div>`;
+}
+function misiUnsurPage1(){
+  return `
+  ${misiUnsurIntro()}
+  <div class="card fade-in">
+    <h3>🎯 Misi 1 — 🔤 Temukan Variabel</h3>
+    <p>Perhatikan bentuk aljabar: <b>3x + 2</b>. Gunakan kartu (x) untuk membantu kelompok kalian menemukan bagian yang menunjukkan jumlah kelompok siswa.</p>
+    <label class="field-label">Bagian manakah yang mewakili jumlah kelompok siswa? Tuliskan hasil pengamatan kelompok kalian:</label>
+    <textarea id="mu1-jawaban" placeholder="Tuliskan hasil pengamatan kelompok..."></textarea>
+    <div class="feedback" id="mu1-fb"></div>
+    <div class="step-actions">
+      <button class="btn btn-outline" onclick="go('misi-peta')">← Peta Misi</button>
+      <button class="btn btn-primary" onclick="misiUnsurCheck1()">MULAI →</button>
+    </div>
+  </div>`;
+}
+function misiUnsurCheck1(){
+  const v = document.getElementById('mu1-jawaban').value.trim();
+  const fb = document.getElementById('mu1-fb');
+  if(v===''){ fb.className='feedback bad show'; fb.textContent='Tuliskan dulu hasil pengamatan kelompok kalian ya.'; return; }
+  fb.className='feedback ok show'; fb.innerHTML='<span class="bounce-check">✓</span> Bagus! (x) adalah variabel yang mewakili jumlah kelompok siswa.';
+  setMisiStep('unsur','v1',true);
+  showToast('Progress Taman Hijau Kelasku tersimpan!');
+  setTimeout(()=>go('misi-unsur','2'), 700);
+}
+function misiUnsurPage2(){
+  return `
+  <div class="card fade-in">
+    <h3>🎯 Misi 2 — 🔢 Temukan Koefisien</h3>
+    <p>Perhatikan kembali: <b>3x + 2</b>. Setiap kelompok menanam 3 bibit.</p>
+    <label class="field-label">1. Angka berapakah yang menunjukkan banyak bibit yang ditanam oleh setiap kelompok?</label>
+    <input type="text" id="mu2-a" placeholder="Jawaban...">
+    <label class="field-label">2. Apa hubungan angka tersebut dengan variabel (x)?</label>
+    <textarea id="mu2-b" placeholder="Jawaban..."></textarea>
+    <label class="field-label">3. Apa nama unsur aljabar dari angka tersebut?</label>
+    <input type="text" id="mu2-c" placeholder="Jawaban...">
+    <div class="feedback" id="mu2-fb"></div>
+    <div class="step-actions">
+      <button class="btn btn-outline" onclick="go('misi-unsur','1')">← Kembali</button>
+      <button class="btn btn-primary" onclick="misiUnsurCheck2()">SELANJUTNYA →</button>
+    </div>
+  </div>`;
+}
+function misiUnsurCheck2(){
+  const fb = document.getElementById('mu2-fb');
+  const a = document.getElementById('mu2-a').value.trim();
+  const filled = ['mu2-a','mu2-b','mu2-c'].every(id=>document.getElementById(id).value.trim()!=='');
+  if(!filled){ fb.className='feedback bad show'; fb.textContent='Lengkapi dulu ketiga jawaban ya.'; return; }
+  if(a!=='3'){ fb.className='feedback bad show'; fb.textContent='Coba periksa lagi jawaban nomor 1 — lihat angka yang menempel pada variabel x.'; return; }
+  fb.className='feedback ok show'; fb.innerHTML='<span class="bounce-check">✓</span> Tepat! Angka 3 adalah koefisien dari x.';
+  setMisiStep('unsur','v2',true);
+  showToast('Progress Taman Hijau Kelasku tersimpan!');
+  setTimeout(()=>go('misi-unsur','3'), 700);
+}
+function misiUnsurPage3(){
+  return `
+  <div class="card fade-in">
+    <h3>🎯 Misi 3 — 📌 Temukan Konstanta</h3>
+    <p>Sekolah telah memiliki <b>2 bibit</b> sebelum kegiatan dimulai. Perhatikan: <b>3x + 2</b>.</p>
+    <label class="field-label">1. Bagian mana yang menunjukkan 2 bibit yang sudah tersedia?</label>
+    <input type="text" id="mu3-a" placeholder="Jawaban...">
+    <label class="field-label">2. Apakah jumlah tersebut berubah ketika jumlah kelompok berubah?</label>
+    <div class="mc-options">
+      <label class="mc-option"><input type="radio" name="mu3-b" value="ya"> Ya, berubah</label>
+      <label class="mc-option"><input type="radio" name="mu3-b" value="tidak"> Tidak, tetap</label>
+    </div>
+    <label class="field-label">3. Apa nama unsur aljabar dari bilangan tersebut?</label>
+    <input type="text" id="mu3-c" placeholder="Jawaban...">
+    <div class="feedback" id="mu3-fb"></div>
+    <div class="step-actions">
+      <button class="btn btn-outline" onclick="go('misi-unsur','2')">← Kembali</button>
+      <button class="btn btn-primary" onclick="misiUnsurCheck3()">LANJUTKAN →</button>
+    </div>
+  </div>`;
+}
+function misiUnsurCheck3(){
+  const fb = document.getElementById('mu3-fb');
+  const sel = document.querySelector('input[name="mu3-b"]:checked');
+  const filled = ['mu3-a','mu3-c'].every(id=>document.getElementById(id).value.trim()!=='');
+  if(!filled || !sel){ fb.className='feedback bad show'; fb.textContent='Lengkapi dulu semua jawaban ya.'; return; }
+  if(sel.value!=='tidak'){ fb.className='feedback bad show'; fb.textContent='Coba pikirkan lagi: apakah 2 bibit yang sudah tersedia ikut berubah kalau jumlah kelompok berubah?'; return; }
+  fb.className='feedback ok show'; fb.innerHTML='<span class="bounce-check">✓</span> Betul! Angka 2 nilainya tetap — itulah konstanta.';
+  setMisiStep('unsur','v3',true);
+  showToast('Progress Taman Hijau Kelasku tersimpan!');
+  setTimeout(()=>go('misi-unsur','4'), 700);
+}
+function misiUnsurPage4(){
+  return `
+  <div class="card fade-in">
+    <h3>🎯 Misi 4 — 🧩 Temukan Suku</h3>
+    <p>Sekarang perhatikan kembali: <b>3x + 2</b>. Perhatikan tanda <b>+</b> yang terdapat di antara 3x dan 2.</p>
+    <label class="field-label">Tantangan: Pisahkan bentuk aljabar tersebut berdasarkan tanda operasi yang digunakan.</label>
+    <input type="text" id="mu4-a" placeholder="Contoh: 3x dan 2">
+    <label class="field-label">Mengapa 3x dan 2 disebut sebagai bagian atau suku dalam bentuk aljabar? Tuliskan hasil diskusi kalian:</label>
+    <textarea id="mu4-b" placeholder="Hasil diskusi..."></textarea>
+    <div class="feedback" id="mu4-fb"></div>
+    <div class="step-actions">
+      <button class="btn btn-outline" onclick="go('misi-unsur','3')">← Kembali</button>
+      <button class="btn btn-primary" onclick="misiUnsurCheck4()">SIMPULKAN →</button>
+    </div>
+  </div>
+  <div id="mu4-refleksi"></div>`;
+}
+function misiUnsurCheck4(){
+  const fb = document.getElementById('mu4-fb');
+  const filled = ['mu4-a','mu4-b'].every(id=>document.getElementById(id).value.trim()!=='');
+  if(!filled){ fb.className='feedback bad show'; fb.textContent='Lengkapi dulu kedua jawaban ya.'; return; }
+  fb.className='feedback ok show'; fb.innerHTML='<span class="bounce-check">✓</span> Hebat! 3x dan 2 masing-masing disebut suku karena dipisahkan oleh tanda +.';
+  document.getElementById('mu4-refleksi').innerHTML = `
+  <div class="card fade-in">
+    <h3>🌍 Refleksi</h3>
+    <label class="field-label">1. Mengapa kita menggunakan huruf dalam aljabar untuk menyatakan suatu jumlah?</label>
+    <textarea id="mu-r1" placeholder="Jawaban..."></textarea>
+    <label class="field-label">2. Bagaimana konsep unsur-unsur aljabar dapat digunakan untuk menggambarkan kegiatan di lingkungan sekitar?</label>
+    <textarea id="mu-r2" placeholder="Jawaban..."></textarea>
+    <label class="field-label">3. Apa tindakan nyata yang dapat kalian lakukan untuk membuat lingkungan sekolah lebih hijau dan bersih?</label>
+    <textarea id="mu-r3" placeholder="Jawaban..."></textarea>
+    <p style="margin-top:14px;font-style:italic;color:var(--green-deep);font-weight:700;">"Kenali lingkungan, temukan polanya, dan gunakan matematika untuk menjaganya."</p>
+    <div class="step-actions">
+      <button class="btn btn-coral" onclick="misiUnsurFinish()">✓ SELESAI</button>
+    </div>
+    <div id="mu-done"></div>
+  </div>`;
+}
+function misiUnsurFinish(){
+  setMisiStep('unsur','v4',true);
+  document.getElementById('mu-done').innerHTML = `
+    <div class="done-anim fade-in visible">
+      <div class="big-emoji">🌱⭐🌍</div>
+      <p style="font-weight:800;color:var(--green-deep);">Proyek Taman Hijau Kelasku selesai! Kalian sudah menguasai unsur-unsur aljabar.</p>
+      <div class="step-actions" style="justify-content:center;">
+         <button class="btn btn-outline" onclick="go('materi-unsur')">📘 Pelajari Materi Unsur</button>
+         <button class="btn btn-primary" onclick="go('misi-operasi')">Lanjut ke Kebun Vertikal →</button>
+       </div>
+    </div>`;
+  showToast('Proyek Taman Hijau Kelasku selesai! 🎉');
+}
+
+/* ============ PAGE: MISI OPERASI (PROYEK ECO ALGEBRA — KEBUN VERTIKAL) ============ */
+function misiOperasiTracker(current){
+  const labels = ["1. Kumpulkan","2. Pilah","3. Tanam","4. Bagikan Kompos"];
+  return `<div class="tracker">${labels.map((l,i)=>`<div class="dot ${i+1<current?'done':i+1===current?'current':''}">${l}</div>`).join('')}</div>`;
+}
+function pageMisiOperasi(step){
+  step = step>=1 && step<=4 ? step : 1;
+  let body='';
+  if(step===1) body = misiOperasiPage1();
+  else if(step===2) body = misiOperasiPage2();
+  else if(step===3) body = misiOperasiPage3();
+  else body = misiOperasiPage4();
+  return `
+  ${misiHeader({title:"♻️ Proyek Eco Algebra — Kebun Vertikal Ramah Lingkungan", badge:'<span class="badge blue">Operasi Aljabar</span>', sub:"Materi: Operasi Aljabar — Kelas VII SMP, kegiatan kelompok 4–5 siswa (Kelompok A, B, C).", breadcrumbLast:"Kebun Vertikal"})}
+  <section>
+    <div class="wrap" style="max-width:880px;">
+      ${misiOperasiTracker(step)}
+      ${body}
+    </div>
+  </section>`;
+}
+function misiOperasiIntro(){
+  return `
+  ${illustrationCard(kebunVertikalSVG(), "Botol plastik bekas dari 3 kelompok dijadikan pot kebun vertikal, sisanya dibagikan kompos secara merata.")}
+  <div class="card fade-in">
+    <h3>🎯 Tujuan Proyek</h3>
+    <ul>
+      <li>Melakukan penjumlahan dan pengurangan bentuk aljabar dengan benar.</li>
+      <li>Menggunakan sifat distributif dalam perkalian bentuk aljabar.</li>
+      <li>Melakukan pembagian bentuk aljabar dengan memahami pembagian setiap suku.</li>
+      <li>Menerapkan operasi aljabar untuk menyelesaikan masalah nyata dalam kehidupan sehari-hari.</li>
+      <li>Bekerja sama dan menunjukkan kepedulian terhadap lingkungan melalui pemanfaatan barang bekas.</li>
+    </ul>
+  </div>
+  <div class="card fade-in">
+    <h3>📖 Cerita Masalah</h3>
+    <div class="story-box">
+      <p>Sekolah ingin membuat <b>kebun vertikal</b> dengan memanfaatkan <b>botol plastik bekas</b>. Siswa kelas VII dibagi menjadi tiga kelompok: <b>Kelompok A, B, dan C</b>.</p>
+      <p><b>Kelompok A</b> mengumpulkan <b>4n + 3</b> botol plastik. <b>Kelompok B</b> mengumpulkan <b>2n + 5</b> botol plastik. <b>Kelompok C</b> mengumpulkan <b>3n + 2</b> botol plastik.</p>
+      <p>Setelah dikumpulkan, ternyata terdapat <b>n + 4</b> botol yang rusak dan tidak dapat digunakan sebagai pot. Botol yang masih baik akan digunakan sebagai pot tanaman — setiap pot membutuhkan <b>2 bibit tanaman</b>.</p>
+      <p>Selain itu, sekolah menyediakan <b>12n + 6</b> kg kompos yang akan dibagikan secara merata kepada Kelompok A, B, dan C.</p>
+    </div>
+    <p><b>Tantangan Utama:</b> Bagaimana kalian dapat menggunakan operasi aljabar untuk menentukan kebutuhan kebun vertikal tersebut? Kalian akan menyelesaikannya melalui empat misi.</p>
+  </div>`;
+}
+function misiOperasiPage1(){
+  return `
+  ${misiOperasiIntro()}
+  <div class="card fade-in">
+    <h3>🎯 Misi 1 — ♻️ Kumpulkan</h3>
+    <p>Kelompok A: <b>4n+3</b>, Kelompok B: <b>2n+5</b>, Kelompok C: <b>3n+2</b> botol plastik.</p>
+    <label class="field-label">Tentukan jumlah seluruh botol plastik yang berhasil dikumpulkan ketiga kelompok:</label>
+    <div class="formula light">(4n+3) + (2n+5) + (3n+2)</div>
+    <input type="text" id="mo1-jawaban" placeholder="Tulis hasil sederhana...">
+    <div class="feedback" id="mo1-fb"></div>
+    <div class="hint-box" id="mo1-hint">💡 Petunjuk pemantik: suku mana yang sejenis? Bagaimana cara mengelompokkannya sebelum dijumlahkan?</div>
+    <div class="step-actions">
+      <button class="btn btn-outline" onclick="go('misi-peta')">← Peta Misi</button>
+      <button class="btn btn-primary" onclick="misiOperasiCheck1()">MULAI MISI →</button>
+    </div>
+  </div>`;
+}
+function misiOperasiCheck1(){
+  const v = document.getElementById('mo1-jawaban').value;
+  const fb = document.getElementById('mo1-fb'), hint = document.getElementById('mo1-hint');
+  if(algEquals(v,'9n+10')){
+    fb.className='feedback ok show'; fb.innerHTML='<span class="bounce-check">✓</span> Tepat! Total botol yang terkumpul 9n + 10.';
+    hint.classList.remove('show');
+    setMisiStep('operasi','o1',true);
+    showToast('Progress Kebun Vertikal tersimpan!');
+    setTimeout(()=>go('misi-operasi','2'), 700);
+  } else {
+    fb.className='feedback bad show'; fb.textContent='Belum tepat. Coba jumlahkan suku sejenis (yang mengandung n), lalu suku konstanta.';
+    hint.classList.add('show');
+  }
+}
+function misiOperasiPage2(){
+  return `
+  <div class="card fade-in">
+    <h3>🎯 Misi 2 — 🗑️ Pilah</h3>
+    <p>Dari hasil Misi 1 (9n+10 botol), terdapat <b>n+4</b> botol yang rusak dan tidak dapat digunakan.</p>
+    <label class="field-label">Tentukan jumlah botol yang masih dapat digunakan untuk kebun vertikal:</label>
+    <div class="formula light">(9n+10) − (n+4)</div>
+    <input type="text" id="mo2-jawaban" placeholder="Tulis hasil sederhana...">
+    <div class="feedback" id="mo2-fb"></div>
+    <div class="hint-box" id="mo2-hint">💡 Petunjuk pemantik: apa yang terjadi ketika tanda negatif berada di depan tanda kurung? Suku mana yang bisa dikurangkan?</div>
+    <div class="step-actions">
+      <button class="btn btn-outline" onclick="go('misi-operasi','1')">← Kembali</button>
+      <button class="btn btn-primary" onclick="misiOperasiCheck2()">MISI SELANJUTNYA →</button>
+    </div>
+  </div>`;
+}
+function misiOperasiCheck2(){
+  const v = document.getElementById('mo2-jawaban').value;
+  const fb = document.getElementById('mo2-fb'), hint = document.getElementById('mo2-hint');
+  if(algEquals(v,'8n+6')){
+    fb.className='feedback ok show'; fb.innerHTML='<span class="bounce-check">✓</span> Tepat! Botol yang masih bisa digunakan 8n + 6.';
+    hint.classList.remove('show');
+    setMisiStep('operasi','o2',true);
+    showToast('Progress Kebun Vertikal tersimpan!');
+    setTimeout(()=>go('misi-operasi','3'), 700);
+  } else {
+    fb.className='feedback bad show'; fb.textContent='Belum tepat. Ingat, tanda negatif di depan kurung mengubah tanda semua suku di dalamnya.';
+    hint.classList.add('show');
+  }
+}
+function misiOperasiPage3(){
+  return `
+  <div class="card fade-in">
+    <h3>🎯 Misi 3 — 🌱 Tanam</h3>
+    <p>Botol yang masih baik (8n+6) dijadikan pot. Setiap pot membutuhkan <b>2 bibit tanaman</b>.</p>
+    <label class="field-label">Tentukan jumlah bibit tanaman yang diperlukan untuk mengisi seluruh pot:</label>
+    <div class="formula light">2 × (8n+6)</div>
+    <input type="text" id="mo3-jawaban" placeholder="Tulis hasil sederhana...">
+    <div class="feedback" id="mo3-fb"></div>
+    <div class="hint-box" id="mo3-hint">💡 Petunjuk pemantik: gunakan sifat distributif — kalikan 2 ke setiap suku di dalam kurung.</div>
+    <div class="step-actions">
+      <button class="btn btn-outline" onclick="go('misi-operasi','2')">← Kembali</button>
+      <button class="btn btn-primary" onclick="misiOperasiCheck3()">SATU LANGKAH LAGI →</button>
+    </div>
+  </div>`;
+}
+function misiOperasiCheck3(){
+  const v = document.getElementById('mo3-jawaban').value;
+  const fb = document.getElementById('mo3-fb'), hint = document.getElementById('mo3-hint');
+  if(algEquals(v,'16n+12')){
+    fb.className='feedback ok show'; fb.innerHTML='<span class="bounce-check">✓</span> Tepat! Dibutuhkan 16n + 12 bibit tanaman.';
+    hint.classList.remove('show');
+    setMisiStep('operasi','o3',true);
+    showToast('Progress Kebun Vertikal tersimpan!');
+    setTimeout(()=>go('misi-operasi','4'), 700);
+  } else {
+    fb.className='feedback bad show'; fb.textContent='Belum tepat. Coba kalikan 2 ke setiap suku (8n dan 6) di dalam kurung.';
+    hint.classList.add('show');
+  }
+}
+function misiOperasiPage4(){
+  return `
+  <div class="card fade-in">
+    <h3>🎯 Misi 4 — 🪴 Bagikan Kompos</h3>
+    <p>Sekolah menyediakan <b>12n+6</b> kg kompos, dibagikan merata kepada Kelompok A, B, dan C.</p>
+    <label class="field-label">Tentukan jumlah kompos yang diterima setiap kelompok:</label>
+    <div class="formula light">(12n+6) : 3</div>
+    <input type="text" id="mo4-jawaban" placeholder="Tulis hasil sederhana...">
+    <div class="feedback" id="mo4-fb"></div>
+    <div class="hint-box" id="mo4-hint">💡 Petunjuk pemantik: bagi setiap suku (12n dan 6) dengan 3 secara terpisah.</div>
+    <div class="step-actions">
+      <button class="btn btn-outline" onclick="go('misi-operasi','3')">← Kembali</button>
+      <button class="btn btn-primary" onclick="misiOperasiCheck4()">PERIKSA →</button>
+    </div>
+  </div>
+  <div id="mo-refleksi"></div>`;
+}
+function misiOperasiCheck4(){
+  const v = document.getElementById('mo4-jawaban').value;
+  const fb = document.getElementById('mo4-fb'), hint = document.getElementById('mo4-hint');
+  if(algEquals(v,'4n+2')){
+    fb.className='feedback ok show'; fb.innerHTML='<span class="bounce-check">✓</span> Tepat! Setiap kelompok menerima 4n + 2 kg kompos.';
+    hint.classList.remove('show');
+    setMisiStep('operasi','o4',true);
+    showToast('Progress Kebun Vertikal tersimpan!');
+    document.getElementById('mo-refleksi').innerHTML = `
+    <div class="card fade-in">
+      <h3>🧮 Refleksi Matematika</h3>
+      <label class="field-label">1. Operasi aljabar apa yang paling mudah kalian kerjakan? Mengapa?</label>
+      <textarea id="mo-r1" placeholder="Jawaban..."></textarea>
+      <label class="field-label">2. Operasi aljabar apa yang paling menantang bagi kelompok kalian?</label>
+      <textarea id="mo-r2" placeholder="Jawaban..."></textarea>
+      <label class="field-label">3. Apa yang kalian pahami tentang penggunaan suku sejenis dalam penjumlahan dan pengurangan bentuk aljabar?</label>
+      <textarea id="mo-r3" placeholder="Jawaban..."></textarea>
+      <label class="field-label">4. Bagaimana sifat distributif membantu kalian dalam menyelesaikan perkalian bentuk aljabar?</label>
+      <textarea id="mo-r4" placeholder="Jawaban..."></textarea>
+      <h4 style="margin-top:16px;">Refleksi Kelompok</h4>
+      ${['Kami bekerja sama dengan baik.','Kami aktif berdiskusi.','Kami dapat menggunakan operasi aljabar.','Kami bertanggung jawab terhadap tugas kelompok.','Kami menunjukkan kepedulian terhadap lingkungan.'].map((s,i)=>`
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-top:1px solid var(--line);flex-wrap:wrap;gap:8px;">
+          <span style="flex:1;min-width:200px;">${s}</span>
+          <div class="pill-select">
+            <label><input type="radio" name="mo-refl-${i}"> 😊 Sangat Baik</label>
+            <label><input type="radio" name="mo-refl-${i}"> 🙂 Baik</label>
+            <label><input type="radio" name="mo-refl-${i}"> 😐 Perlu Diperbaiki</label>
+          </div>
+        </div>`).join('')}
+      <p style="margin-top:16px;font-style:italic;color:var(--green-deep);font-weight:700;">"Matematika membantu kita menghitung dengan tepat, sedangkan kepedulian membantu kita menjaga lingkungan dengan bijak."</p>
+      <div class="step-actions">
+        <button class="btn btn-coral" onclick="misiOperasiFinish()">✓ MISI SELESAI</button>
+      </div>
+      <div id="mo-done"></div>
+    </div>`;
+  } else {
+    fb.className='feedback bad show'; fb.textContent='Belum tepat. Coba bagi tiap suku (12n dan 6) dengan 3 secara terpisah.';
+    hint.classList.add('show');
+  }
+}
+function misiOperasiFinish(){
+  document.getElementById('mo-done').innerHTML = `
+    <div class="done-anim fade-in visible">
+      <div class="big-emoji">♻️⭐🌱</div>
+      <p style="font-weight:800;color:var(--green-deep);">Proyek Kebun Vertikal selesai! Kalian sudah menguasai operasi aljabar.</p>
+      <div class="step-actions" style="justify-content:center;">
+         <button class="btn btn-outline" onclick="go('materi-operasi')">📘 Pelajari Materi Operasi</button>
+         <button class="btn btn-primary" onclick="go('misi-sifat','1')">Lanjut ke Kotak Pilah Sampah Mini →</button>
+       </div>
+    </div>`;
+  showToast('Proyek Kebun Vertikal selesai! 🎉');
 }
 
 /* ============ PAGE: MISI SIFAT (4 halaman) ============ */
@@ -1497,7 +2127,7 @@ function sifatPage1(){
   </div>
   <div class="card fade-in">
     <h3>📖 Cerita Masalah</h3>
-    <p>Sampah yang berhasil dikumpulkan kelompok adalah sebagai berikut:</p>
+    <p>Tiga kelompok piket mengumpulkan sampah:</p>
     <div class="two-col">
       <div class="story-box"><b>Kelompok A</b><br>x + 2</div>
       <div class="story-box"><b>Kelompok B</b><br>y + 3</div>
@@ -1535,23 +2165,22 @@ function sifatPage2(){
   return `
   <div class="card fade-in">
     <h3>🔍 Aktivitas 1 — Tukar Posisi</h3>
-    <div class="formula light">Jika (x+2) + (y+3) ditukar posisinya menjadi (y+3) + (x+2)</div>
+    <div class="formula light">(x+2) + (y+3)&nbsp;&nbsp;→&nbsp;&nbsp;(y+3) + (x+2)</div>
     <p><b>Apakah jumlahnya berubah?</b></p>
     <div class="mc-options">
       <label class="mc-option"><input type="radio" name="s2-ya"> Ya</label>
       <label class="mc-option"><input type="radio" name="s2-ya"> Tidak</label>
     </div>
-    <label class="field-label"> Jika kita menjumlahkan a + b,  </label>
     <label class="field-label">Lengkapi: a + b = ...</label>
     <input type="text" id="s2-eq1" placeholder="Contoh: b + a">
     <label class="field-label">Nama sifat</label>
-    <input type="text" id="s2-name1" placeholder="Komutatif, Asosiatif, atau Distributif">
+    <input type="text" id="s2-name1" placeholder="Nama sifat...">
     <label class="field-label">Temuan Kelompok: "Menukar ______ tidak mengubah hasil penjumlahan."</label>
     <input type="text" id="s2-temuan1" placeholder="Isi bagian yang kosong...">
   </div>
   <div class="card fade-in">
     <h3>🧩 Aktivitas 2 — Ubah Pengelompokan</h3>
-    <div class="formula light">Jika [(x+2)+(y+3)]+(x+y+1)&nbsp;&nbsp;→&nbsp;&nbsp;(x+2)+[(y+3)+(x+y+1)]</div>
+    <div class="formula light">[(x+2)+(y+3)]+(x+y+1)&nbsp;&nbsp;→&nbsp;&nbsp;(x+2)+[(y+3)+(x+y+1)]</div>
     <p><b>Apakah jumlahnya berubah?</b></p>
     <div class="mc-options">
       <label class="mc-option"><input type="radio" name="s2-ya2"> Ya</label>
@@ -1598,9 +2227,9 @@ function sifatPage3(){
       </div>
       <div>
         <label class="field-label">Sehingga: 3(x+y+2) = ...</label>
-        <input type="text" id="s3-result" placeholder="......">
+        <input type="text" id="s3-result" placeholder="Contoh: 3x+3y+6">
         <label class="field-label">Temukan Polanya: a(b+c) = ...</label>
-        <input type="text" id="s3-pattern" placeholder="...">
+        <input type="text" id="s3-pattern" placeholder="Contoh: ab+ac">
         <label class="field-label">Nama sifat</label>
         <input type="text" id="s3-name" placeholder="Nama sifat...">
       </div>
@@ -1613,11 +2242,11 @@ function sifatPage3(){
     <h3>🚀 Misi Tantangan</h3>
     <p>Selama <b>4 hari</b>, setiap hari terkumpul: <b>2x + y + 3</b></p>
     <label class="field-label">Model Aljabar (4 hari) = ...</label>
-    <input type="text" id="s3-model" placeholder="......">
+    <input type="text" id="s3-model" placeholder="Contoh: 4(2x+y+3)">
     <label class="field-label">Ubah tanpa tanda kurung: 4(2x+y+3) = ...</label>
-    <input type="text" id="s3-nokurung" placeholder="....">
+    <input type="text" id="s3-nokurung" placeholder="Contoh: 8x+4y+12">
     <label class="field-label">Tuliskan satu bentuk lain yang ekuivalen</label>
-    <input type="text" id="s3-ekuivalen" placeholder=".....">
+    <input type="text" id="s3-ekuivalen" placeholder="Contoh: 4y+8x+12">
     <label class="field-label">Sifat yang digunakan</label>
     <div class="pill-select">
       <label><input type="checkbox" name="s3-sifat"> Komutatif</label>
@@ -1692,7 +2321,10 @@ function sifatFinish(){
     <div class="done-anim fade-in visible">
       <div class="big-emoji">🌍🍃⭐</div>
       <p style="font-weight:800;color:var(--green-deep);">Misi Sifat Aljabar selesai! Terima kasih sudah peduli lingkungan.</p>
-      <button class="btn btn-primary" style="margin-top:10px;" onclick="go('misi-pemodelan')">Lanjut ke Misi Pemodelan →</button>
+      <div class="step-actions" style="justify-content:center;">
+         <button class="btn btn-outline" onclick="go('materi-sifat')">📘 Pelajari Materi Sifat</button>
+         <button class="btn btn-primary" onclick="go('misi-pemodelan')">Lanjut ke Misi Pemodelan →</button>
+       </div>
     </div>`;
   showToast('Misi Sifat Aljabar selesai! 🎉');
 }
@@ -1704,10 +2336,10 @@ function pagePemodelan(sub){
     ${misiHeader({title:"🌍 Misi Pemodelan", sub:"Memodelkan Masalah Cinta Lingkungan dengan Bentuk Aljabar", breadcrumbLast:"Misi Pemodelan"})}
     <section>
       <div class="wrap">
-        ${illustrationCard(bankSampahSVG(), "Dari bank sampah, taman, air, hingga kantin bebas plastik — semua bisa dimodelkan dengan aljabar.")}
+        ${illustrationCard(bankSampahSVG(), "Dari bank sampah, taman, air, hingga soal bentuk aljabar — semua bisa diselesaikan dengan langkah pemodelan yang runtut.")}
         <div class="card fade-in">
           <h3>📚 Pola Pemodelan yang Digunakan</h3>
-          <p>Untuk setiap permasalahan, gunakan 7 langkah berikut:</p>
+          <p>Untuk setiap permasalahan, gunakan langkah-langkah berikut:</p>
           <div class="tracker">${POLA_STEPS.map((s,i)=>`<div class="dot">${i+1}. ${s}</div>`).join('')}</div>
         </div>
         <div class="misi-grid" style="margin-top:10px;">
@@ -1747,7 +2379,8 @@ function pagePemodelan(sub){
         <div class="step-actions">
           <button class="btn btn-outline" onclick="go('misi-pemodelan')">← Semua Permasalahan</button>
           <button class="btn btn-coral" onclick="pemodelanFinish('${problem.id}')">✓ SELESAIKAN MISI INI</button>
-          ${idx<PEMODELAN.length-1?`<button class="btn btn-primary" onclick="go('misi-pemodelan','${PEMODELAN[idx+1].id}')">Permasalahan Berikutnya →</button>`:''}
+          ${problem.materi?`<button class="btn btn-outline" onclick="go('${problem.materi}')">📘 Pelajari Materi Lebih Lanjut</button>`:''}
+          ${idx<PEMODELAN.length-1?`<button class="btn btn-primary" onclick="go('misi-pemodelan','${PEMODELAN[idx+1].id}')">Permasalahan Berikutnya →</button>`:`<button class="btn btn-primary" onclick="go('misi-pemodelan')">Kembali ke Daftar Misi →</button>`}
         </div>
         <div id="pm-done-${problem.id}"></div>
       </div>
