@@ -182,28 +182,57 @@ section{padding:88px 0;}
 
 /* PETA KONSEP */
 #peta{background:var(--white);}
-.peta-diagram{display:flex;flex-direction:column;align-items:center;gap:0;margin-bottom:10px;}
+.peta-diagram{display:none;}
 .peta-root{
   background:var(--blue-deep);color:#fff;padding:16px 34px;border-radius:16px;
   font-family:'Baloo 2';font-weight:700;font-size:1.15rem;box-shadow:var(--shadow);
 }
 .peta-line{width:2px;height:34px;background:var(--line);}
-.peta-branches{display:flex;gap:6px;width:100%;justify-content:center;position:relative;margin-top:0;}
-.peta-nodes{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;margin-top:8px;}
-.peta-node{
-  background:var(--green-pale);border:2px solid var(--green-soft);border-radius:var(--radius);
-  padding:26px 18px;text-align:center;cursor:pointer;
-  transition:transform .2s, box-shadow .2s, background .2s;
+/* PETA KONSEP - layout kartu sudut + panah, meniru referensi */
+.peta-map{position:relative;max-width:940px;margin:0 auto;}
+.peta-map svg.connectors{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;}
+.peta-map-grid{
+  position:relative;z-index:2;
+  display:grid;grid-template-columns:1fr 220px 1fr;grid-template-rows:auto 40px auto;
+  align-items:center;gap:0 18px;
 }
-.peta-node:hover,.peta-node:focus-visible{transform:translateY(-6px) scale(1.02);box-shadow:var(--shadow);background:#fff;outline:none;}
-.peta-node .icon{font-size:2.1rem;}
-.peta-node h4{font-size:1.02rem;margin-top:10px;}
-.peta-node ul{list-style:none;padding:0;margin:10px 0 0;font-size:.83rem;color:#4A5D57;text-align:left;}
-.peta-node ul li{padding:2px 0;}
-.peta-node ul li::before{content:"• ";color:var(--green-deep);}
-.peta-node .go{margin-top:14px;font-weight:800;color:var(--green-deep);font-size:.85rem;}
-@media (max-width:900px){.peta-nodes{grid-template-columns:1fr 1fr;}}
-@media (max-width:560px){.peta-nodes{grid-template-columns:1fr;}}
+.peta-center-cell{grid-column:2;grid-row:1/4;display:flex;align-items:center;justify-content:center;}
+.peta-center-box{
+  background:#E4F1FB;border:2px solid #BFE3F5;border-radius:20px;
+  padding:26px 22px;text-align:center;box-shadow:var(--shadow);
+}
+.peta-center-box .display{font-size:1.3rem;line-height:1.25;}
+.peta-corner{
+  background:#fff;border-radius:20px;padding:22px 22px;box-shadow:var(--shadow);
+  cursor:pointer;transition:transform .2s,box-shadow .2s;border:2px solid var(--line);
+  text-align:left;
+}
+.peta-corner:hover,.peta-corner:focus-visible{transform:translateY(-5px);box-shadow:0 16px 34px -14px rgba(23,59,76,.28);outline:none;}
+.peta-corner.c-green{background:#F1FAF2;border-color:#BFE3C9;}
+.peta-corner.c-orange{background:#FFF8EC;border-color:#FFE1A8;}
+.peta-corner.c-purple{background:#F8F2FC;border-color:#E3D3F5;}
+.peta-corner.c-blue{background:#EEF8FD;border-color:#BFE3F5;}
+.peta-circle{
+  width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:1.5rem;color:#fff;margin-bottom:12px;box-shadow:0 6px 14px -6px rgba(0,0,0,.25);
+}
+.peta-circle.bg-green{background:#4CAF6C;}
+.peta-circle.bg-orange{background:#F5A623;}
+.peta-circle.bg-purple{background:#9B6FD6;}
+.peta-circle.bg-blue{background:#3D8FC4;}
+.peta-corner h4{font-size:1.08rem;margin-bottom:8px;}
+.peta-corner .underline-dots{border-top:2px dotted currentColor;width:60%;margin:4px 0 10px;opacity:.5;}
+.peta-corner p{font-size:.86rem;color:#4A5D57;margin:0;}
+.peta-corner .go{margin-top:12px;font-weight:800;font-size:.82rem;color:var(--blue-deep);}
+.peta-cell-tl{grid-column:1;grid-row:1;} .peta-cell-tr{grid-column:3;grid-row:1;}
+.peta-cell-bl{grid-column:1;grid-row:3;} .peta-cell-br{grid-column:3;grid-row:3;}
+@media (max-width:880px){
+  .peta-map-grid{display:flex;flex-direction:column;gap:16px;}
+  .peta-map svg.connectors{display:none;}
+  .peta-center-cell{order:0;}
+  .peta-corner{width:100%;}
+}
+.peta-nodes{display:none;}
 
 /* MISI cards */
 .misi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;}
@@ -367,8 +396,9 @@ input:focus,textarea:focus{outline:3px solid var(--blue-sky);outline-offset:1px;
 .task-num{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--blue-deep);color:#fff;font-size:.8rem;font-weight:800;margin-right:8px;}
 
 /* animations */
-.fade-in{opacity:0;transform:translateY(16px);transition:opacity .5s ease, transform .5s ease;}
-.fade-in.visible{opacity:1;transform:translateY(0);}
+.fade-in{opacity:1;transform:translateY(0);transition:opacity .5s ease, transform .5s ease;}
+.fade-in.pre{opacity:0;transform:translateY(16px);}
+.fade-in.pre.visible{opacity:1;transform:translateY(0);}
 .bounce-check{display:inline-block;animation:pop .4s ease;}
 @keyframes pop{0%{transform:scale(0);}70%{transform:scale(1.25);}100%{transform:scale(1);}}
 .done-anim{text-align:center;padding:26px 0;}
@@ -459,7 +489,7 @@ function getMisiPercent(misi, totalSteps){
   const done = progress[misi] ? Object.values(progress[misi]).filter(Boolean).length : 0;
   return Math.round((done/totalSteps)*100);
 }
-const MISI_TOTALS = { unsur:2, operasi:3, sifat:4, pemodelan:5 };
+const MISI_TOTALS = { unsur:3, operasi:4, sifat:4, pemodelan:5 };
 function updateGlobalProgress(){
   let totalDone = 0, totalAll = 0;
   MISI_LIST.forEach(m=>{
@@ -643,10 +673,192 @@ function render(){
 
 function observeFadeIns(){
   const els = document.querySelectorAll('.fade-in');
+  els.forEach(el=>el.classList.add('pre'));
   const io = new IntersectionObserver((entries)=>{
     entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target);} });
-  },{threshold:.12});
+  },{threshold:.05});
   els.forEach(el=>io.observe(el));
+  /* jaring pengaman: pastikan konten tetap tampil walau observer gagal/telat (mis. saat screenshot/print) */
+  clearTimeout(window._fadeSafety);
+  window._fadeSafety = setTimeout(()=>{ els.forEach(el=>el.classList.add('visible')); }, 1000);
+}
+
+/* ============ HERO ILLUSTRATION (SVG) ============ */
+function heroSVG(){
+  return `
+  <svg viewBox="0 0 420 260" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;" role="img" aria-label="Ilustrasi siswa SMP belajar aljabar di lingkungan sekolah">
+    <!-- ground -->
+    <rect x="0" y="215" width="420" height="45" rx="10" fill="#DCEFDF"/>
+    <!-- school building -->
+    <rect x="18" y="120" width="90" height="95" rx="8" fill="#FFFFFF" stroke="#BFE3C9" stroke-width="2"/>
+    <polygon points="14,120 63,92 112,120" fill="#5FB6E5"/>
+    <rect x="40" y="150" width="18" height="18" rx="3" fill="#8FD6A0"/>
+    <rect x="68" y="150" width="18" height="18" rx="3" fill="#FFD873"/>
+    <rect x="52" y="185" width="20" height="30" rx="3" fill="#2E7D4F"/>
+    <!-- blackboard -->
+    <rect x="150" y="34" width="140" height="86" rx="10" fill="#173B4C"/>
+    <rect x="150" y="34" width="140" height="86" rx="10" fill="none" stroke="#8B5E34" stroke-width="6"/>
+    <text x="220" y="70" text-anchor="middle" font-family="Baloo 2, sans-serif" font-size="26" fill="#FFFFFF" font-weight="700">x + y</text>
+    <text x="220" y="98" text-anchor="middle" font-family="Baloo 2, sans-serif" font-size="15" fill="#8FD6A0">3n − 1 = ?</text>
+    <!-- earth icon on board corner -->
+    <circle cx="270" cy="48" r="9" fill="#8FD6A0"/>
+    <!-- boy student -->
+    <g transform="translate(150,140)">
+      <circle cx="20" cy="14" r="14" fill="#F4C99B"/>
+      <path d="M6 10 a14 14 0 0 1 28 0 c0 -8 -28 -8 -28 0z" fill="#2B2B2B"/>
+      <rect x="4" y="28" width="32" height="46" rx="10" fill="#FFFFFF"/>
+      <rect x="4" y="28" width="32" height="46" rx="10" fill="none" stroke="#5FB6E5" stroke-width="2"/>
+      <rect x="17" y="28" width="6" height="46" fill="#5FB6E5"/>
+      <rect x="0" y="74" width="40" height="14" rx="4" fill="#173B4C"/>
+      <rect x="12" y="46" width="16" height="20" rx="3" fill="#2E7D4F"/>
+    </g>
+    <!-- girl student with hijab -->
+    <g transform="translate(230,140)">
+      <path d="M20 -6 C4 -6 -2 12 4 30 L36 30 C42 12 36 -6 20 -6z" fill="#2E7D4F"/>
+      <circle cx="20" cy="16" r="13" fill="#F4C99B"/>
+      <path d="M6 16 a14 15 0 0 1 28 0" fill="#2E7D4F"/>
+      <rect x="2" y="30" width="36" height="44" rx="10" fill="#FFFFFF"/>
+      <rect x="2" y="30" width="36" height="44" rx="10" fill="none" stroke="#FF8F7A" stroke-width="2"/>
+      <rect x="0" y="72" width="40" height="14" rx="4" fill="#173B4C"/>
+      <rect x="12" y="48" width="16" height="18" rx="3" fill="#FFD873"/>
+    </g>
+    <!-- book on ground -->
+    <g transform="translate(320,180)">
+      <rect x="0" y="10" width="46" height="30" rx="4" fill="#FF8F7A"/>
+      <rect x="4" y="6" width="38" height="6" rx="3" fill="#FFFFFF"/>
+      <line x1="23" y1="10" x2="23" y2="40" stroke="#C24A34" stroke-width="2"/>
+    </g>
+    <!-- plant pot -->
+    <g transform="translate(20,180)">
+      <path d="M8 30 L28 30 L24 46 L12 46 Z" fill="#8B5E34"/>
+      <path d="M18 30 C6 20 10 4 18 -2 C26 4 30 20 18 30 Z" fill="#2E7D4F"/>
+      <path d="M18 30 C14 22 14 12 18 4" stroke="#8FD6A0" stroke-width="2" fill="none"/>
+    </g>
+    <!-- little bin icon -->
+    <g transform="translate(370,190)">
+      <rect x="0" y="8" width="26" height="26" rx="4" fill="#5FB6E5"/>
+      <rect x="-2" y="4" width="30" height="6" rx="3" fill="#173B4C"/>
+      <rect x="8" y="0" width="10" height="4" rx="2" fill="#173B4C"/>
+    </g>
+  </svg>`;
+}
+
+/* ============ MASKOT & ILUSTRASI PENDUKUNG ============ */
+function earthMascot(size){
+  size = size || 110;
+  return `
+  <svg width="${size}" height="${size}" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <circle cx="60" cy="64" r="6" fill="#DCEFDF" opacity=".7"/>
+    <circle cx="60" cy="56" r="42" fill="#6BC4E8"/>
+    <path d="M28 40c8-6 18 2 26-2s16-10 26-2c4 10 2 22-6 30-10 8-24 10-34 2-10-8-16-18-12-28z" fill="#4CAF6C"/>
+    <path d="M40 78c10 4 22 2 30-4" stroke="#3E9457" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <circle cx="48" cy="52" r="3.4" fill="#173B4C"/>
+    <circle cx="70" cy="52" r="3.4" fill="#173B4C"/>
+    <path d="M48 64c4 5 16 5 20 0" stroke="#173B4C" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <circle cx="42" cy="60" r="4.5" fill="#FF9B87" opacity=".55"/>
+    <circle cx="78" cy="60" r="4.5" fill="#FF9B87" opacity=".55"/>
+  </svg>`;
+}
+
+function trashBagsSVG(){
+  return `
+  <svg viewBox="0 0 460 150" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;" aria-hidden="true">
+    ${[ [40,'2'], [150,'5'], [260,'8'], [370,'11'] ].map(([x,label],i)=>{
+      const h = 40 + i*14;
+      return `
+      <g transform="translate(${x},${130-h})">
+        <path d="M0 ${h} C-6 ${h-10} -4 ${h-26} 6 ${h-30} C10 ${h-40} 34 ${h-40} 38 ${h-30} C48 ${h-26} 50 ${h-10} 44 ${h} Z" fill="${i%2===0?'#8FD6A0':'#5FB6E5'}" opacity="0.9"/>
+        <path d="M14 ${h-30} q6 -10 16 0" stroke="#2E7D4F" stroke-width="3" fill="none"/>
+        <text x="22" y="${h+18}" text-anchor="middle" font-family="Baloo 2, sans-serif" font-size="14" fill="#173B4C" font-weight="700">Pola ${i+1}</text>
+        <text x="22" y="${h-14}" text-anchor="middle" font-family="Nunito, sans-serif" font-size="13" fill="#173B4C" font-weight="800">${label}</text>
+      </g>`;
+    }).join('')}
+    <path d="M20 130 H440" stroke="#DCEFDF" stroke-width="10" stroke-linecap="round"/>
+  </svg>`;
+}
+
+function treePlantingSVG(){
+  return `
+  <svg viewBox="0 0 460 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;" aria-hidden="true">
+    <path d="M0 150 Q230 120 460 150 V160 H0 Z" fill="#DCEFDF"/>
+    ${[70,180,290,400].map((x,i)=>`
+      <g transform="translate(${x},${60+ (i%2? -8:0)})">
+        <ellipse cx="0" cy="46" rx="20" ry="7" fill="#C9E9CE" opacity=".7"/>
+        <rect x="-5" y="30" width="10" height="26" rx="3" fill="#8B5E34"/>
+        <circle cx="0" cy="18" r="24" fill="${i%2===0?'#4CAF6C':'#6BC98A'}"/>
+        <circle cx="-10" cy="10" r="8" fill="#5FBE7C" opacity=".7"/>
+      </g>`).join('')}
+    <g transform="translate(230,110)">
+      <path d="M-16 0 L16 0 L12 26 L-12 26 Z" fill="#8B5E34"/>
+      <text x="0" y="18" text-anchor="middle" font-family="Baloo 2, sans-serif" font-size="12" fill="#fff" font-weight="700">kompos</text>
+    </g>
+  </svg>`;
+}
+
+function trashBinsSVG(){
+  const bins = [ ['#4CAF6C','Organik'], ['#F5A623','Anorganik'], ['#3D8FC4','Kertas'] ];
+  return `
+  <svg viewBox="0 0 460 195" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;" aria-hidden="true">
+    ${bins.map(([color,label],i)=>{
+      const x = 60 + i*150;
+      return `
+      <g transform="translate(${x},14)">
+        <rect x="-30" y="20" width="60" height="70" rx="12" fill="${color}"/>
+        <rect x="-34" y="10" width="68" height="14" rx="7" fill="${color}" opacity=".8"/>
+        <path d="M-10 10 h20 v-8 h-20z" fill="${color}" opacity=".8"/>
+        <circle cx="0" cy="55" r="16" fill="#fff" opacity=".18"/>
+        <path d="M-8 46 a8 8 0 1 1 16 0" stroke="#fff" stroke-width="3" fill="none"/>
+        <path d="M-8 46 v14 M0 46 v18 M8 46 v14" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+        <text x="0" y="106" text-anchor="middle" font-family="Baloo 2, sans-serif" font-size="14" fill="#173B4C" font-weight="700">${label}</text>
+      </g>`;
+    }).join('')}
+    <g transform="translate(200,150)">
+      <rect x="-30" y="0" width="26" height="26" rx="6" fill="#EAF7EC" stroke="#8FD6A0" stroke-width="2"/>
+      <text x="-17" y="18" text-anchor="middle" font-family="Baloo 2, sans-serif" font-size="14" fill="#2E7D4F" font-weight="800">x</text>
+      <rect x="4" y="0" width="26" height="26" rx="6" fill="#E9F5FC" stroke="#BFE3F5" stroke-width="2"/>
+      <text x="17" y="18" text-anchor="middle" font-family="Baloo 2, sans-serif" font-size="14" fill="#1B5E82" font-weight="800">y</text>
+      <text x="60" y="18" font-family="Nunito, sans-serif" font-size="12" fill="#4A5D57">= kartu sampah</text>
+    </g>
+  </svg>`;
+}
+
+function bankSampahSVG(){
+  return `
+  <svg viewBox="0 0 460 170" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;" aria-hidden="true">
+    <ellipse cx="230" cy="150" rx="200" ry="14" fill="#DCEFDF"/>
+    <g transform="translate(70,30)">${earthMascotInline(90)}</g>
+    <g transform="translate(230,50)">
+      <rect x="-46" y="0" width="92" height="70" rx="12" fill="#FFFFFF" stroke="#BFE3C9" stroke-width="2"/>
+      <rect x="-38" y="10" width="76" height="10" rx="5" fill="#8FD6A0"/>
+      <rect x="-38" y="26" width="52" height="10" rx="5" fill="#FFD873"/>
+      <rect x="-38" y="42" width="64" height="10" rx="5" fill="#FF8F7A"/>
+      <text x="0" y="90" text-anchor="middle" font-family="Baloo 2, sans-serif" font-size="13" fill="#173B4C" font-weight="700">Poin Bank Sampah</text>
+    </g>
+    <g transform="translate(360,40)">
+      <path d="M0 20 L20 20 L16 40 L4 40 Z" fill="#5FB6E5"/>
+      <path d="M-8 20 a18 18 0 0 1 36 0" fill="none" stroke="#5FB6E5" stroke-width="4"/>
+      <text x="10" y="58" text-anchor="middle" font-family="Baloo 2, sans-serif" font-size="12" fill="#173B4C" font-weight="700">Botol Plastik</text>
+    </g>
+  </svg>`;
+}
+/* versi inline mascot (dipakai di dalam svg lain, tanpa tag svg pembungkus) */
+function earthMascotInline(size){
+  const s = (size||90)/120;
+  return `<g transform="scale(${s})">
+    <circle cx="60" cy="56" r="42" fill="#6BC4E8"/>
+    <path d="M28 40c8-6 18 2 26-2s16-10 26-2c4 10 2 22-6 30-10 8-24 10-34 2-10-8-16-18-12-28z" fill="#4CAF6C"/>
+    <circle cx="48" cy="52" r="3.4" fill="#173B4C"/>
+    <circle cx="70" cy="52" r="3.4" fill="#173B4C"/>
+    <path d="M48 64c4 5 16 5 20 0" stroke="#173B4C" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <circle cx="42" cy="60" r="4.5" fill="#FF9B87" opacity=".55"/>
+    <circle cx="78" cy="60" r="4.5" fill="#FF9B87" opacity=".55"/>
+  </g>`;
+}
+function illustrationCard(svgHtml, caption){
+  return `<div class="card fade-in" style="text-align:center;background:linear-gradient(160deg,#F1FAF2,#EEF8FD);">
+    ${svgHtml}
+    <p style="margin-top:10px;font-weight:700;color:var(--blue-deep);font-size:.9rem;">${caption}</p>
+  </div>`;
 }
 
 /* ============ PAGE: BERANDA ============ */
@@ -675,10 +887,7 @@ function pageBeranda(){
           <div class="floaty leaf1">🍃</div>
           <div class="floaty leaf2">🌿</div>
           <div class="floaty heart-float">💚</div>
-          <div style="display:flex;gap:14px;align-items:flex-end;justify-content:center;font-size:5rem;">
-            <span>🧑‍🎓</span><span>📖</span><span>👧🏻</span>
-          </div>
-          <div style="text-align:center;margin-top:6px;font-size:1.8rem;">✏️ 𝑥 + 𝑦 🌍 ♻️ 🪴</div>
+          ${heroSVG()}
           <div style="margin-top:16px;background:#fff;border-radius:14px;padding:14px 18px;font-family:'Baloo 2';color:var(--blue-deep);text-align:center;box-shadow:var(--shadow);">
             3n − 1 = ... 🌱
           </div>
@@ -725,34 +934,60 @@ function pageBeranda(){
         <h2>PETA KONSEP ALJABAR</h2>
         <p>Klik salah satu bagian untuk langsung memulai misi pembelajarannya.</p>
       </div>
-      <div class="peta-diagram fade-in">
-        <div class="peta-root">BENTUK ALJABAR</div>
-        <div class="peta-line"></div>
-      </div>
-      <div class="peta-nodes fade-in">
-        <div class="peta-node" tabindex="0" onclick="go('misi-unsur')" onkeypress="if(event.key==='Enter')go('misi-unsur')">
-          <div class="icon">🌱</div>
-          <h4>Unsur Aljabar</h4>
-          <ul><li>Variabel</li><li>Koefisien</li><li>Konstanta</li><li>Suku</li></ul>
-          <div class="go">Mulai Misi →</div>
-        </div>
-        <div class="peta-node" tabindex="0" onclick="go('misi-operasi')" onkeypress="if(event.key==='Enter')go('misi-operasi')">
-          <div class="icon">♻️</div>
-          <h4>Operasi Aljabar</h4>
-          <ul><li>Penjumlahan</li><li>Pengurangan</li><li>Perkalian</li><li>Pembagian</li></ul>
-          <div class="go">Mulai Misi →</div>
-        </div>
-        <div class="peta-node" tabindex="0" onclick="go('misi-sifat','1')" onkeypress="if(event.key==='Enter')go('misi-sifat','1')">
-          <div class="icon">💚</div>
-          <h4>Sifat Aljabar</h4>
-          <ul><li>Komutatif</li><li>Asosiatif</li><li>Distributif</li></ul>
-          <div class="go">Kotak Pilah Sampah →</div>
-        </div>
-        <div class="peta-node" tabindex="0" onclick="go('misi-pemodelan')" onkeypress="if(event.key==='Enter')go('misi-pemodelan')">
-          <div class="icon">🌍</div>
-          <h4>Pemodelan</h4>
-          <ul><li>Pahami situasi</li><li>Buat model</li><li>Sederhanakan</li><li>Tafsirkan</li></ul>
-          <div class="go">Mulai Misi →</div>
+      <div class="peta-map fade-in">
+        <svg class="connectors" viewBox="0 0 940 560" preserveAspectRatio="none">
+          <defs>
+            <marker id="arrowIn" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+              <path d="M0,0 L8,4 L0,8 Z" fill="#173B4C"/>
+            </marker>
+          </defs>
+          <path d="M330,110 H420 V140" stroke="#173B4C" stroke-width="3" fill="none" marker-end="url(#arrowIn)"/>
+          <path d="M610,110 H520 V140" stroke="#173B4C" stroke-width="3" fill="none" marker-end="url(#arrowIn)"/>
+          <path d="M330,450 H420 V420" stroke="#173B4C" stroke-width="3" fill="none" marker-end="url(#arrowIn)"/>
+          <path d="M610,450 H520 V420" stroke="#173B4C" stroke-width="3" fill="none" marker-end="url(#arrowIn)"/>
+        </svg>
+        <div class="peta-map-grid">
+          <div class="peta-cell-tl">
+            <div class="peta-corner c-green" tabindex="0" onclick="go('misi-unsur')" onkeypress="if(event.key==='Enter')go('misi-unsur')">
+              <div class="peta-circle bg-green">𝑥</div>
+              <h4 style="color:#2E7D4F;">Unsur-Unsur Aljabar</h4>
+              <div class="underline-dots" style="color:#2E7D4F;"></div>
+              <p>variabel, koefisien, konstanta, dan suku</p>
+              <div class="go" style="color:#2E7D4F;">Mulai Misi →</div>
+            </div>
+          </div>
+          <div class="peta-cell-tr">
+            <div class="peta-corner c-orange" tabindex="0" onclick="go('misi-operasi')" onkeypress="if(event.key==='Enter')go('misi-operasi')">
+              <div class="peta-circle bg-orange">+−</div>
+              <h4 style="color:#B8720C;">Operasi Aljabar</h4>
+              <div class="underline-dots" style="color:#B8720C;"></div>
+              <p>penjumlahan, pengurangan, perkalian, dan pembagian</p>
+              <div class="go" style="color:#B8720C;">Mulai Misi →</div>
+            </div>
+          </div>
+          <div class="peta-center-cell">
+            <div class="peta-center-box">
+              <div class="display">BENTUK<br>ALJABAR</div>
+            </div>
+          </div>
+          <div class="peta-cell-bl">
+            <div class="peta-corner c-purple" tabindex="0" onclick="go('misi-sifat','1')" onkeypress="if(event.key==='Enter')go('misi-sifat','1')">
+              <div class="peta-circle bg-purple">⚖️</div>
+              <h4 style="color:#7A4FB0;">Sifat Aljabar</h4>
+              <div class="underline-dots" style="color:#7A4FB0;"></div>
+              <p>komutatif, asosiatif, dan distributif</p>
+              <div class="go" style="color:#7A4FB0;">Kotak Pilah Sampah →</div>
+            </div>
+          </div>
+          <div class="peta-cell-br">
+            <div class="peta-corner c-blue" tabindex="0" onclick="go('misi-pemodelan')" onkeypress="if(event.key==='Enter')go('misi-pemodelan')">
+              <div class="peta-circle bg-blue">🌍</div>
+              <h4 style="color:#2E6E96;">Pemodelan</h4>
+              <div class="underline-dots" style="color:#2E6E96;"></div>
+              <p>mengubah masalah kontekstual ke bentuk aljabar</p>
+              <div class="go" style="color:#2E6E96;">Mulai Misi →</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -905,6 +1140,7 @@ function pageUnsur(){
   ${misiHeader({title:"🌱 Misi Unsur-Unsur Aljabar", sub:"Kenali variabel, koefisien, konstanta, dan suku melalui pola kantong sampah.", breadcrumbLast:"Misi Unsur"})}
   <section>
     <div class="wrap" style="max-width:880px;">
+      ${illustrationCard(trashBagsSVG(), "Pola kantong sampah bertambah 3 tiap tahap — dari sinilah rumus Uₙ = 3n − 1 ditemukan.")}
       <div class="card fade-in">
         <h3>📖 Apa itu Aljabar?</h3>
         <p>Aljabar merupakan cabang matematika yang menggunakan <b>huruf, angka, dan simbol operasi</b> untuk menyatakan suatu hubungan atau permasalahan matematika. Huruf yang digunakan disebut <b>variabel</b>, sedangkan angka dan simbol menunjukkan hubungan antarvariabel.</p>
@@ -970,6 +1206,22 @@ function pageUnsur(){
         <div class="hint-box" id="u-hint2">💡 Petunjuk: Koefisien adalah angka pengali di depan variabel.</div>
       </div>
 
+      <div class="card fade-in">
+        <h3>📐 Latihan Tambahan (Bebas Konteks)</h3>
+        <p>Sebelum lanjut, latihan dulu dengan bentuk aljabar biasa — tanpa cerita — supaya konsepnya makin melekat.</p>
+        <div class="task-item">
+          <p><span class="task-num">1</span>Perhatikan bentuk aljabar <b>7p − 4q + 9</b>. Berapa koefisien dari q?</p>
+          <input type="text" id="u-q3" placeholder="Contoh: -4">
+        </div>
+        <div class="task-item">
+          <p><span class="task-num">2</span>Jika bentuk aljabar <b>2x + 5</b> dan nilai x = 3, berapa nilai bentuk aljabar tersebut?</p>
+          <input type="number" id="u-q4" placeholder="Masukkan angka...">
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="checkUnsurDrill()">✔ CEK SEMUA JAWABAN</button>
+        <div class="feedback" id="u-fb-drill"></div>
+        <div class="hint-box" id="u-hint-drill">💡 Petunjuk: koefisien q pada 7p − 4q + 9 adalah angka di depan q (termasuk tandanya). Untuk soal kedua, ganti x dengan 3 lalu hitung.</div>
+      </div>
+
       <div class="step-actions fade-in">
         <button class="btn btn-outline" onclick="go('materi')">← Materi &amp; Misi</button>
         <button class="btn btn-primary" onclick="go('misi-operasi')">Lanjut ke Misi Operasi →</button>
@@ -977,6 +1229,24 @@ function pageUnsur(){
     </div>
   </section>
   `;
+}
+
+function checkUnsurDrill(){
+  const a1 = document.getElementById('u-q3').value.trim().replace(/\s+/g,'');
+  const a2 = parseFloat(document.getElementById('u-q4').value);
+  const fb = document.getElementById('u-fb-drill');
+  const hint = document.getElementById('u-hint-drill');
+  const ok1 = a1==='-4' || a1==='−4';
+  const ok2 = a2===11;
+  if(ok1 && ok2){
+    fb.className='feedback ok show'; fb.innerHTML='<span class="bounce-check">✓</span> Semua jawaban tepat! Konsep unsur aljabar kamu makin kuat 💪';
+    hint.classList.remove('show');
+    setMisiStep('unsur','drill',true);
+    showToast('Progress Misi Unsur tersimpan!');
+  } else {
+    fb.className='feedback bad show'; fb.textContent='Ada yang belum tepat. Coba periksa lagi kedua jawabanmu.';
+    hint.classList.add('show');
+  }
 }
 
 function checkUnsurQ1(){
@@ -1015,6 +1285,7 @@ function pageOperasi(){
   ${misiHeader({title:"♻️ Misi Operasi Aljabar", sub:"Hitung dan sederhanakan bentuk aljabar melalui konteks penghijauan sekolah.", breadcrumbLast:"Misi Operasi"})}
   <section>
     <div class="wrap" style="max-width:880px;">
+      ${illustrationCard(treePlantingSVG(), "Penghijauan sekolah: menanam pohon dan menghitung kebutuhan pupuk kompos dengan aljabar.")}
       <div class="card fade-in">
         <h3>➕➖ Penjumlahan dan Pengurangan</h3>
         <p>Penjumlahan dan pengurangan bentuk aljabar hanya dapat dilakukan pada suku-suku yang <b>sejenis</b> (variabel dan pangkatnya sama), dengan cara menjumlahkan/mengurangkan koefisiennya. Suku yang tidak sejenis tetap ditulis apa adanya.</p>
@@ -1073,6 +1344,12 @@ function pageOperasi(){
         </table>
       </div>
 
+      <div class="card fade-in">
+        <h3>📐 Latihan Tambahan (Bebas Konteks)</h3>
+        <p>Yuk latihan menyederhanakan bentuk aljabar secara langsung, tanpa cerita.</p>
+        ${renderDrillOperasi()}
+      </div>
+
       <div class="step-actions fade-in">
         <button class="btn btn-outline" onclick="go('misi-unsur')">← Misi Unsur</button>
         <button class="btn btn-primary" onclick="go('misi-sifat','1')">Lanjut ke Misi Sifat →</button>
@@ -1086,24 +1363,92 @@ function togglePembahasan(id, btnId){
   const btn = document.getElementById(btnId);
   btn.textContent = document.getElementById(id).classList.contains('show') ? 'SEMBUNYIKAN PEMBAHASAN' : 'LIHAT PEMBAHASAN';
 }
-function normAlg(s){ return s.toLowerCase().replace(/\s+/g,'').replace(/×/g,'*'); }
+
+/* Pemeriksa bentuk aljabar yang fleksibel: menerima urutan suku berbeda,
+   spasi, tanda kali eksplisit/implisit, selama nilainya (secara struktur) sama. */
+function canonicalAlg(input){
+  if(input===undefined || input===null) return null;
+  let s = String(input).toLowerCase().replace(/\s+/g,'')
+    .replace(/−/g,'-').replace(/×/g,'*').replace(/\*/g,'')
+    .replace(/²/g,'^2');
+  if(s==='') return null;
+  if(!/^[+-]/.test(s)) s = '+'+s;
+  const terms = s.match(/[+-][^+-]+/g) || [];
+  const vars = {};
+  let constant = 0;
+  let valid = true;
+  terms.forEach(t=>{
+    const sign = t[0]==='-' ? -1 : 1;
+    const body = t.slice(1);
+    const m = body.match(/^(\d*\.?\d*)([a-z])(\^2)?$/);
+    if(m){
+      const coef = m[1]==='' ? 1 : parseFloat(m[1]);
+      const key = m[2] + (m[3] ? '^2' : '');
+      vars[key] = (vars[key]||0) + sign*coef;
+    } else if(/^\d*\.?\d+$/.test(body)){
+      constant += sign*parseFloat(body);
+    } else if(body!==''){
+      valid = false;
+    }
+  });
+  if(!valid) return null;
+  const keys = Object.keys(vars).filter(k=>vars[k]!==0).sort();
+  return keys.map(k=>`${vars[k]}${k}`).join(',') + `|${constant}`;
+}
+function algEquals(userAnswer, correctAnswer){
+  const u = canonicalAlg(userAnswer);
+  const c = canonicalAlg(correctAnswer);
+  if(u===null) return false;
+  return u === c;
+}
+
 function checkOperasiQ1(){
-  const v = normAlg(document.getElementById('o-q1').value);
+  const v = document.getElementById('o-q1').value;
   const fb=document.getElementById('o-fb1'), hint=document.getElementById('o-hint1');
-  if(v==='6a+2'){ fb.className='feedback ok show'; fb.innerHTML='<span class="bounce-check">✓</span> Hebat! Jawaban kamu tepat 🌳'; hint.classList.remove('show'); setMisiStep('operasi','q1',true); showToast('Progress Misi Operasi tersimpan!'); }
-  else { fb.className='feedback bad show'; fb.textContent='Belum tepat.'; hint.classList.add('show'); }
+  if(algEquals(v,'6a+2')){ fb.className='feedback ok show'; fb.innerHTML='<span class="bounce-check">✓</span> Hebat! Jawaban kamu tepat 🌳'; hint.classList.remove('show'); setMisiStep('operasi','q1',true); showToast('Progress Misi Operasi tersimpan!'); }
+  else { fb.className='feedback bad show'; fb.textContent='Belum tepat. Coba jumlahkan suku sejenis (yang mengandung a) lalu suku konstanta.'; hint.classList.add('show'); }
 }
 function checkOperasiQ2(){
-  const v = normAlg(document.getElementById('o-q2').value);
+  const v = document.getElementById('o-q2').value;
   const fb=document.getElementById('o-fb2'), hint=document.getElementById('o-hint2');
-  if(v==='6n+4'){ fb.className='feedback ok show'; fb.innerHTML='<span class="bounce-check">✓</span> Tepat sekali! 🌱'; hint.classList.remove('show'); setMisiStep('operasi','q2',true); showToast('Progress Misi Operasi tersimpan!'); }
-  else { fb.className='feedback bad show'; fb.textContent='Belum tepat.'; hint.classList.add('show'); }
+  if(algEquals(v,'6n+4')){ fb.className='feedback ok show'; fb.innerHTML='<span class="bounce-check">✓</span> Tepat sekali! 🌱'; hint.classList.remove('show'); setMisiStep('operasi','q2',true); showToast('Progress Misi Operasi tersimpan!'); }
+  else { fb.className='feedback bad show'; fb.textContent='Belum tepat. Coba kalikan 2 ke setiap suku di dalam kurung.'; hint.classList.add('show'); }
 }
 function checkOperasiQ3(){
-  const v = normAlg(document.getElementById('o-q3').value);
+  const v = document.getElementById('o-q3').value;
   const fb=document.getElementById('o-fb3'), hint=document.getElementById('o-hint3');
-  if(v==='4b+3'){ fb.className='feedback ok show'; fb.innerHTML='<span class="bounce-check">✓</span> Kompos terbagi rata! 🌍'; hint.classList.remove('show'); setMisiStep('operasi','q3',true); showToast('Progress Misi Operasi tersimpan!'); }
-  else { fb.className='feedback bad show'; fb.textContent='Belum tepat.'; hint.classList.add('show'); }
+  if(algEquals(v,'4b+3')){ fb.className='feedback ok show'; fb.innerHTML='<span class="bounce-check">✓</span> Kompos terbagi rata! 🌍'; hint.classList.remove('show'); setMisiStep('operasi','q3',true); showToast('Progress Misi Operasi tersimpan!'); }
+  else { fb.className='feedback bad show'; fb.textContent='Belum tepat. Coba bagi tiap suku (12b dan 9) dengan 3 secara terpisah.'; hint.classList.add('show'); }
+}
+
+/* ---- Latihan tambahan: aljabar murni tanpa konteks cerita ---- */
+const DRILL_OPERASI = [
+  {soal:"3x + 5y − x + 2y", jawaban:"2x+7y"},
+  {soal:"(5p − 3) + (2p + 6)", jawaban:"7p+3"},
+  {soal:"4(2a − 3)", jawaban:"8a-12"},
+  {soal:"(10x + 15) : 5", jawaban:"2x+3"}
+];
+function renderDrillOperasi(){
+  return DRILL_OPERASI.map((d,i)=>`
+    <div class="task-item">
+      <p><span class="task-num">${i+1}</span>Sederhanakan: <b>${d.soal}</b></p>
+      <input type="text" id="drill-op-${i}" placeholder="Tulis hasil sederhana...">
+      <div class="feedback" id="drill-op-fb-${i}"></div>
+    </div>`).join('') + `<button class="btn btn-outline btn-sm" style="margin-top:6px;" onclick="checkDrillOperasi()">✔ CEK SEMUA JAWABAN</button>`;
+}
+function checkDrillOperasi(){
+  let allOk = true;
+  DRILL_OPERASI.forEach((d,i)=>{
+    const val = document.getElementById('drill-op-'+i).value;
+    const fb = document.getElementById('drill-op-fb-'+i);
+    if(algEquals(val, d.jawaban)){
+      fb.className='feedback ok show'; fb.innerHTML='<span class="bounce-check">✓</span> Benar!';
+    } else {
+      allOk = false;
+      fb.className='feedback bad show'; fb.textContent='Belum tepat, coba periksa lagi suku sejenisnya.';
+    }
+  });
+  if(allOk){ setMisiStep('operasi','drill',true); showToast('Latihan tambahan selesai! 🎉'); }
 }
 
 /* ============ PAGE: MISI SIFAT (4 halaman) ============ */
@@ -1130,6 +1475,7 @@ function pageSifat(step){
 
 function sifatPage1(){
   return `
+  ${illustrationCard(trashBinsSVG(), "3 kotak pilah sampah — organik, anorganik, kertas — jadi model kartu x dan y dalam misi ini.")}
   <div class="card fade-in">
     <h3>🎯 Tujuan</h3>
     <ul>
@@ -1160,12 +1506,30 @@ function sifatPage1(){
     <h4 style="margin-top:18px;">🎯 Misi</h4>
     <p>Bagaimana cara menyusun dan menghitung seluruh sampah dengan lebih mudah tanpa mengubah jumlahnya?</p>
     <div class="formula">(x+2) + (y+3) + (x+y+1)</div>
+    <label class="field-label">Sederhanakan jumlah seluruh sampah di atas menjadi bentuk aljabar paling sederhana:</label>
+    <input type="text" id="s1-jawaban" placeholder="Contoh: 2x+2y+6">
+    <div class="feedback" id="s1-fb"></div>
+    <div class="hint-box" id="s1-hint">💡 Petunjuk: kumpulkan dulu suku-suku x, lalu suku-suku y, lalu semua angka (konstanta).</div>
     <div class="step-actions">
-      <button class="btn btn-primary" onclick="sifatComplete1()">▶ MULAI MISI</button>
+      <button class="btn btn-primary" onclick="sifatCheck1()">▶ CEK JAWABAN</button>
     </div>
   </div>`;
 }
-function sifatComplete1(){ setMisiStep('sifat','p1',true); showToast('Misi dimulai! Progress tersimpan 🌱'); go('misi-sifat','2'); }
+function sifatCheck1(){
+  const v = document.getElementById('s1-jawaban').value;
+  const fb = document.getElementById('s1-fb');
+  const hint = document.getElementById('s1-hint');
+  if(algEquals(v,'2x+2y+6')){
+    fb.className='feedback ok show'; fb.innerHTML='<span class="bounce-check">✓</span> Hebat! Kamu berhasil menyusun ulang seluruh sampah 🌱';
+    hint.classList.remove('show');
+    setMisiStep('sifat','p1',true);
+    showToast('Progress Misi Sifat tersimpan!');
+    setTimeout(()=>go('misi-sifat','2'), 700);
+  } else {
+    fb.className='feedback bad show'; fb.textContent='Belum tepat. Coba perhatikan bagian yang berubah dan bagian yang tetap.';
+    hint.classList.add('show');
+  }
+}
 
 function sifatPage2(){
   return `
@@ -1339,6 +1703,7 @@ function pagePemodelan(sub){
     ${misiHeader({title:"🌍 Misi Pemodelan", sub:"Memodelkan Masalah Cinta Lingkungan dengan Bentuk Aljabar", breadcrumbLast:"Misi Pemodelan"})}
     <section>
       <div class="wrap">
+        ${illustrationCard(bankSampahSVG(), "Dari bank sampah, taman, air, hingga kantin bebas plastik — semua bisa dimodelkan dengan aljabar.")}
         <div class="card fade-in">
           <h3>📚 Pola Pemodelan yang Digunakan</h3>
           <p>Untuk setiap permasalahan, gunakan 7 langkah berikut:</p>
