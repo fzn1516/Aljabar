@@ -1535,12 +1535,13 @@ function sifatPage2(){
   return `
   <div class="card fade-in">
     <h3>🔍 Aktivitas 1 — Tukar Posisi</h3>
-    <div class="formula light">Jika (x+2) + (y+3) ditukar menjadi (y+3) + (x+2)</div>
+    <div class="formula light">Jika (x+2) + (y+3) ditukar posisinya menjadi (y+3) + (x+2)</div>
     <p><b>Apakah jumlahnya berubah?</b></p>
     <div class="mc-options">
       <label class="mc-option"><input type="radio" name="s2-ya"> Ya</label>
       <label class="mc-option"><input type="radio" name="s2-ya"> Tidak</label>
     </div>
+    <label class="field-label"> Jika kita menjumlahkan a + b,  </label>
     <label class="field-label">Lengkapi: a + b = ...</label>
     <input type="text" id="s2-eq1" placeholder="Contoh: b + a">
     <label class="field-label">Nama sifat</label>
@@ -1550,7 +1551,7 @@ function sifatPage2(){
   </div>
   <div class="card fade-in">
     <h3>🧩 Aktivitas 2 — Ubah Pengelompokan</h3>
-    <div class="formula light">[(x+2)+(y+3)]+(x+y+1)&nbsp;&nbsp;→&nbsp;&nbsp;(x+2)+[(y+3)+(x+y+1)]</div>
+    <div class="formula light">Jika [(x+2)+(y+3)]+(x+y+1)&nbsp;&nbsp;→&nbsp;&nbsp;(x+2)+[(y+3)+(x+y+1)]</div>
     <p><b>Apakah jumlahnya berubah?</b></p>
     <div class="mc-options">
       <label class="mc-option"><input type="radio" name="s2-ya2"> Ya</label>
@@ -1597,9 +1598,9 @@ function sifatPage3(){
       </div>
       <div>
         <label class="field-label">Sehingga: 3(x+y+2) = ...</label>
-        <input type="text" id="s3-result" placeholder="Contoh: 3x+3y+6">
+        <input type="text" id="s3-result" placeholder="......">
         <label class="field-label">Temukan Polanya: a(b+c) = ...</label>
-        <input type="text" id="s3-pattern" placeholder="Contoh: ab+ac">
+        <input type="text" id="s3-pattern" placeholder="...">
         <label class="field-label">Nama sifat</label>
         <input type="text" id="s3-name" placeholder="Nama sifat...">
       </div>
@@ -1612,11 +1613,11 @@ function sifatPage3(){
     <h3>🚀 Misi Tantangan</h3>
     <p>Selama <b>4 hari</b>, setiap hari terkumpul: <b>2x + y + 3</b></p>
     <label class="field-label">Model Aljabar (4 hari) = ...</label>
-    <input type="text" id="s3-model" placeholder="Contoh: 4(2x+y+3)">
+    <input type="text" id="s3-model" placeholder="......">
     <label class="field-label">Ubah tanpa tanda kurung: 4(2x+y+3) = ...</label>
-    <input type="text" id="s3-nokurung" placeholder="Contoh: 8x+4y+12">
+    <input type="text" id="s3-nokurung" placeholder="....">
     <label class="field-label">Tuliskan satu bentuk lain yang ekuivalen</label>
-    <input type="text" id="s3-ekuivalen" placeholder="Contoh: 4y+8x+12">
+    <input type="text" id="s3-ekuivalen" placeholder=".....">
     <label class="field-label">Sifat yang digunakan</label>
     <div class="pill-select">
       <label><input type="checkbox" name="s3-sifat"> Komutatif</label>
