@@ -411,6 +411,26 @@ input:focus,textarea:focus{outline:3px solid var(--blue-sky);outline-offset:1px;
   *{animation-duration:.001ms !important;transition-duration:.001ms !important;}
 }
 </style>
+<style>
+.pdf-scroll{overflow-x:auto;margin:18px auto;max-width:100%;background:#f3fcf8}
+.pdf-sheet{position:relative;width:759px;height:1500px;margin:auto;font-family:Arial,sans-serif;--pdf-color:#188c47}
+.pdf-sheet>img{width:100%;height:100%;display:block}
+.pdf-sheet .pdf-field{position:absolute;margin:0!important;padding:7px!important;border:1px solid #dce4e6!important;border-radius:8px!important;background:#fff!important;color:#24332e!important;font:16px Arial,sans-serif!important;min-height:0!important;resize:none;box-sizing:border-box}
+.pdf-hit{position:absolute;background:transparent;border:0;cursor:pointer;border-radius:8px;color:transparent;font:16px Arial}
+.pdf-hit:focus-visible{outline:3px solid #17293c;outline-offset:2px}
+.pdf-field:focus{outline:2px solid var(--pdf-color)}
+.pdf-sheet .pdf-solid{background:var(--pdf-color);color:white;font-weight:bold;border:0;font-size:15px}
+.pdf-card{position:absolute;border:0;background:white;padding:0;cursor:grab;border-radius:8px;overflow:hidden}
+.pdf-card img{width:100%;height:100%;display:block;pointer-events:none}
+.pdf-card:focus-visible,.pdf-drop:focus-visible{outline:3px solid var(--pdf-color)}
+.pdf-drop{position:absolute;border:2px dashed #8e9690;border-radius:8px;background:white;color:#21372c;font:17px Arial;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap}
+.pdf-drop img{width:45px;height:45px;object-fit:contain}
+.pdf-status{min-height:30px;margin:12px auto;max-width:759px;padding:12px;background:#fff;border-left:5px solid var(--green);color:#19382d}
+.sifat-menu{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:20px}
+.sifat-option{display:block;text-align:left;border:1px solid #d8e7df;border-radius:16px;background:#fff;overflow:hidden;cursor:pointer;font:inherit}
+.sifat-option img{width:100%;height:100px;object-fit:cover;object-position:top}.sifat-option span{display:block;padding:18px;font-weight:bold}
+</style>
+<script src="konfigurasi.js"></script>
 </head>
 <body>
 
@@ -430,6 +450,7 @@ input:focus,textarea:focus{outline:3px solid var(--blue-sky);outline-offset:1px;
     <div class="nav-links" id="navLinks">
       <button data-page="beranda" onclick="go('beranda')">Beranda</button>
       <button data-page="petunjuk" onclick="go('petunjuk')">Petunjuk Penggunaan</button>
+      <button data-page="respons" onclick="go('respons')">Respons Siswa</button>
       <button data-page="profil" onclick="go('profil')">Profil Pengembang</button>
     </div>
     <div class="nav-cta">
@@ -442,6 +463,7 @@ input:focus,textarea:focus{outline:3px solid var(--blue-sky);outline-offset:1px;
   <div id="mobileMenu">
     <button onclick="go('beranda');toggleMobileMenu()">🏠 Beranda</button>
     <button onclick="go('petunjuk');toggleMobileMenu()">📋 Petunjuk Penggunaan</button>
+    <button onclick="go('respons');toggleMobileMenu()">Respons Siswa</button>
     <button onclick="go('profil');toggleMobileMenu()">👩‍🏫 Profil Pengembang</button>
   </div>
   <div id="progressStrip"><div id="progressFill"></div></div>
@@ -475,7 +497,7 @@ const STORE_KEY = "aljabarcinta_progress_v2";
 function loadProgress(){
   try{ return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; }catch(e){ return {}; }
 }
-function saveProgress(p){ localStorage.setItem(STORE_KEY, JSON.stringify(p)); }
+function saveProgress(p){ try { localStorage.setItem(STORE_KEY, JSON.stringify(p)); } catch(e) { showToast("Penyimpanan perangkat gagal. Jangan tutup halaman sebelum menyalin jawaban."); } }
 let progress = loadProgress();
 
 const MISI_LIST = ["unsur","operasi","sifat","pemodelan"];
@@ -489,7 +511,7 @@ function getMisiPercent(misi, totalSteps){
   const done = progress[misi] ? Object.values(progress[misi]).filter(Boolean).length : 0;
   return Math.round((done/totalSteps)*100);
 }
-const MISI_TOTALS = { unsur:4, operasi:4, sifat:4, pemodelan:7 };
+const MISI_TOTALS = { unsur:4, operasi:4, sifat:10, pemodelan:7 };
 const MATERI_TOTALS = { materiUnsur:3, materiOperasi:4 };
 function updateGlobalProgress(){
   let totalDone = 0, totalAll = 0;
@@ -698,7 +720,9 @@ function render(){
   else if(page==='misi-peta') main.innerHTML = pageMisiPeta();
   else if(page==='misi-unsur') main.innerHTML = pageMisiUnsur(sub? parseInt(sub):1);
   else if(page==='misi-operasi') main.innerHTML = pageMisiOperasi(sub? parseInt(sub):1);
-  else if(page==='misi-sifat') main.innerHTML = pageSifat(sub? parseInt(sub):1);
+  else if(page==='misi-sifat') main.innerHTML = sub ? pageSifat(parseInt(sub)||1) : pageSifatMenu();
+  else if(page==='sifat-pdf') main.innerHTML = pageSifatPDF(Number(sub)||1);
+  else if(page==='respons') main.innerHTML = pageRespons();
   else if(page==='misi-pemodelan') main.innerHTML = pagePemodelan(sub || null);
   else if(page==='profil') main.innerHTML = pageProfil();
   else main.innerHTML = pageBeranda();
@@ -1123,7 +1147,7 @@ function misiCardsHTML(){
   return `<div class="misi-grid">
     ${mk('01','🌱','Unsur-unsur Aljabar','Taman Hijau Kelasku — temukan unsur aljabar lewat kegiatan menanam bibit.',u,"go('misi-unsur')")}
     ${mk('02','♻️','Operasi Aljabar','Kebun Vertikal — operasi aljabar lewat botol plastik bekas.',o,"go('misi-operasi')")}
-    ${mk('03','💚','Sifat Aljabar','Kotak Pilah Sampah Mini — Temukan komutatif, asosiatif, dan distributif.',s,"go('misi-sifat','1')")}
+    ${mk('03','💚','Sifat Aljabar','Kotak Pilah Sampah Mini — Temukan komutatif, asosiatif, dan distributif.',s,"go('misi-sifat')")}
     ${mk('04','🌍','Pemodelan','Masalah Cinta Lingkungan — Ubah masalah nyata menjadi model aljabar.',p,"go('misi-pemodelan')")}
   </div>`;
 }
@@ -1205,7 +1229,7 @@ function pagePetunjuk(){
       </div>
       <div class="card fade-in">
         <h3>💾 4. Progress Otomatis Tersimpan</h3>
-        <p>Progres belajarmu (persentase di bagian atas halaman) tersimpan otomatis di perangkat yang kamu pakai, walau halaman ditutup atau di-refresh. Tidak perlu login.</p>
+        <p>Jawaban dan progres aktivitasmu tersimpan otomatis di perangkat yang kamu pakai, walau halaman ditutup atau di-refresh. Tidak perlu login. Penyimpanan berlaku pada browser dan perangkat yang sama. Persentase menunjukkan aktivitas selesai, bukan nilai penguasaan. Uraian dan refleksi perlu ditinjau guru.</p>
       </div>
       <div class="card fade-in">
         <h3>🧑‍🤝‍🧑 5. Kerja Kelompok</h3>
@@ -1344,7 +1368,7 @@ function pageMisiPeta(){
             </div>
           </div>
           <div class="peta-cell-bl">
-            <div class="peta-corner c-purple" tabindex="0" onclick="go('misi-sifat','1')" onkeypress="if(event.key==='Enter')go('misi-sifat','1')">
+            <div class="peta-corner c-purple" tabindex="0" onclick="go('misi-sifat')" onkeypress="if(event.key==='Enter')go('misi-sifat')">
               <div class="peta-circle bg-purple">🗑️</div>
               <h4 style="color:#7A4FB0;">Sifat Aljabar</h4>
               <div class="underline-dots" style="color:#7A4FB0;"></div>
@@ -1866,7 +1890,7 @@ function misiUnsurFinish(){
   document.getElementById('mu-done').innerHTML = `
     <div class="done-anim fade-in visible">
       <div class="big-emoji">🌱⭐🌍</div>
-      <p style="font-weight:800;color:var(--green-deep);">Proyek Taman Hijau Kelasku selesai! Kalian sudah menguasai unsur-unsur aljabar.</p>
+      <p style="font-weight:800;color:var(--green-deep);">Proyek Taman Hijau Kelasku selesai! Jawaban uraian dan refleksi perlu ditinjau bersama guru.</p>
       <div class="step-actions" style="justify-content:center;">
          <button class="btn btn-outline" onclick="go('materi-unsur')">📘 Pelajari Materi Unsur</button>
          <button class="btn btn-primary" onclick="go('misi-operasi')">Lanjut ke Kebun Vertikal →</button>
@@ -2072,10 +2096,10 @@ function misiOperasiFinish(){
   document.getElementById('mo-done').innerHTML = `
     <div class="done-anim fade-in visible">
       <div class="big-emoji">♻️⭐🌱</div>
-      <p style="font-weight:800;color:var(--green-deep);">Proyek Kebun Vertikal selesai! Kalian sudah menguasai operasi aljabar.</p>
+      <p style="font-weight:800;color:var(--green-deep);">Proyek Kebun Vertikal selesai! Hitungan sudah diperiksa. Refleksi perlu ditinjau bersama guru.</p>
       <div class="step-actions" style="justify-content:center;">
          <button class="btn btn-outline" onclick="go('materi-operasi')">📘 Pelajari Materi Operasi</button>
-         <button class="btn btn-primary" onclick="go('misi-sifat','1')">Lanjut ke Kotak Pilah Sampah Mini →</button>
+         <button class="btn btn-primary" onclick="go('misi-sifat')">Lanjut ke Sifat Aljabar →</button>
        </div>
     </div>`;
   showToast('Proyek Kebun Vertikal selesai! 🎉');
@@ -2094,7 +2118,7 @@ function pageSifat(step){
   else if(step===3) body = sifatPage3();
   else body = sifatPage4();
   return `
-  ${misiHeader({title:"💚 Misi Kotak Pilah Sampah Mini", badge:'<span class="badge blue">Sifat Aljabar</span>', sub:'"Kelasku Bersih, Bumiku Sehat" — Materi: Sifat Komutatif, Asosiatif, dan Distributif. Kelas VII SMP, kegiatan kelompok 4–5 siswa.', breadcrumbLast:"Misi Sifat"})}
+  ${misiHeader({title:"💚 Misi Kotak Pilah Sampah Mini", badge:'<span class="badge blue">Sifat Aljabar</span>', sub:'"Kelasku Bersih, Bumiku Sehat" — Materi: Sifat Komutatif, Asosiatif, dan Distributif. Kelas VII SMP, kegiatan kelompok 4–5 siswa.', breadcrumbLast:"Misi Sifat",backHash:"misi-sifat",backLabel:"Menu Sifat Aljabar"})}
   <section>
     <div class="wrap" style="max-width:880px;">
       ${sifatTracker(step)}
@@ -2409,6 +2433,135 @@ function pemodelanFinish(id){
 function afterRender(page, sub){
   updateGlobalProgress();
 }
+
+/* Jawaban tersimpan per halaman; status selesai bukan skor uraian. */
+const ANSWER_KEY='aljabarcinta_answers_v1';
+let answers={};
+try { answers=JSON.parse(localStorage.getItem(ANSWER_KEY))||{}; } catch(e) {}
+function routeKey(){return location.hash || '#beranda';}
+function fields(){return [...document.querySelectorAll('#main input, #main textarea, #main select')];}
+function fieldKey(el){return el.id || el.name+':'+fields().filter(x=>x.name===el.name).indexOf(el);}
+function persistAnswers(){try{localStorage.setItem(ANSWER_KEY,JSON.stringify(answers));}catch(e){showToast('Jawaban belum tersimpan: penyimpanan perangkat penuh atau diblokir.');}}
+function captureAnswer(e){const el=e.target;if(!el.matches('#main input, #main textarea, #main select'))return;
+ const page=answers[routeKey()] ||= {};
+ fields().forEach(x=>{page[fieldKey(x)]= x.type==='checkbox'||x.type==='radio' ? x.checked : x.value;});persistAnswers();}
+document.addEventListener('input',captureAnswer);document.addEventListener('change',captureAnswer);
+function restoreAnswers(){const page=answers[routeKey()]||{};fields().forEach(el=>{const v=page[fieldKey(el)];if(v!==undefined){if(el.type==='checkbox'||el.type==='radio')el.checked=v;else el.value=v;}});}
+const originalAfterRender=afterRender;
+afterRender=function(page,sub){originalAfterRender(page,sub);restoreAnswers();
+ if(page==='misi-unsur'&&sub==='4'&&answers[routeKey()]?.['mu-r1']!==undefined){misiUnsurCheck4();restoreAnswers();}
+ if(page==='misi-operasi'&&sub==='4'&&answers[routeKey()]?.['mo-r1']!==undefined){misiOperasiCheck4();restoreAnswers();}
+ if(page.startsWith('misi-')){const note=document.createElement('p');note.className='wrap';note.textContent='Jawaban disimpan pada browser ini. Hitungan diperiksa otomatis; uraian dan refleksi perlu ditinjau guru. Progres menunjukkan aktivitas selesai, bukan nilai.';document.getElementById('main').prepend(note);}
+};
+new MutationObserver(()=>restoreAnswers()).observe(document.getElementById('main'),{childList:true,subtree:true});
+const val=id=>document.getElementById(id)?.value.trim()||'';
+const norm=s=>s.toLowerCase().replace(/[^a-z0-9]/g,'');
+function fail(id,msg){const e=document.getElementById(id);e.className='feedback bad show';e.textContent=msg;return false;}
+function requireFields(ids,fb){return ids.every(id=>val(id))||fail(fb,'Lengkapi semua jawaban terlebih dahulu.');}
+function guard(name,check){const old=window[name];window[name]=function(...args){if(check(...args)!==false)return old(...args);};}
+guard('misiUnsurCheck1',()=>norm(val('mu1-jawaban'))==='x'||fail('mu1-fb','Tuliskan simbol variabel saja yang mewakili jumlah kelompok.'));
+guard('misiUnsurCheck2',()=>norm(val('mu2-c'))==='koefisien'||fail('mu2-fb','Nama unsur yang mengalikan variabel belum tepat.'));
+guard('misiUnsurCheck3',()=>val('mu3-a')==='2'&&norm(val('mu3-c'))==='konstanta'||fail('mu3-fb','Periksa bilangan tetap dan nama unsur aljabarnya.'));
+guard('misiUnsurCheck4',()=>['3xdan2','2dan3x','3x2','23x'].includes(norm(val('mu4-a')))||fail('mu4-fb','Pisahkan menjadi dua suku. Tuliskan dengan format: suku pertama dan suku kedua.'));
+// Uraian tidak diberi label benar otomatis.
+const oldMu1= misiUnsurPage1;misiUnsurPage1=function(){return oldMu1().replace('Tuliskan hasil pengamatan kelompok kalian:','Tuliskan simbol variabelnya saja:');};
+guard('sifatCheck2',()=>{
+ if(!requireFields(['s2-eq1','s2-name1','s2-temuan1','s2-eq2','s2-name2','s2-temuan2'],'s2-fb'))return false;
+ const radio=n=>[...document.getElementsByName(n)].findIndex(e=>e.checked)===1;
+ return radio('s2-ya')&&radio('s2-ya2')&&val('s2-eq1').replace(/\s/g,'')==='b+a'&&val('s2-eq2').replace(/\s/g,'')==='a+(b+c)'&&norm(val('s2-name1'))==='komutatif'&&norm(val('s2-name2'))==='asosiatif'&&/urutan|posisi/.test(val('s2-temuan1').toLowerCase())&&/pengelompokan|kelompok/.test(val('s2-temuan2').toLowerCase())||fail('s2-fb','Periksa semua jawaban: pertukaran urutan adalah komutatif; perubahan pengelompokan adalah asosiatif. Jumlahnya tetap.');
+});
+guard('sifatCheck3',()=>{
+ const ok=val('s3-x')==='3'&&val('s3-y')==='3'&&val('s3-b')==='6'&&algEquals(val('s3-result'),'3x+3y+6')&&['ab+ac','ac+ab'].includes(val('s3-pattern').replace(/[\s*×]/g,''))&&norm(val('s3-name'))==='distributif'&&/setiap suku|semua suku|tiap suku/.test(val('s3-kesimpulan').toLowerCase())&&algEquals(val('s3-model'),'8x+4y+12')&&algEquals(val('s3-nokurung'),'8x+4y+12')&&!/[()]/.test(val('s3-nokurung'))&&algEquals(val('s3-ekuivalen'),'8x+4y+12')&&document.getElementsByName('s3-sifat')[2].checked;
+ return ok||fail('s3-fb','Periksa isian: jumlah kartu 3 dan 3, tutup botol 6. Kalikan faktor luar dengan setiap suku, lalu pilih sifat distributif.');
+});
+function requireReflection(ids){if(ids.some(id=>!val(id))){showToast('Lengkapi refleksi terlebih dahulu. Refleksi akan ditinjau guru.');return false;}}
+guard('misiUnsurFinish',()=>requireReflection(['mu-r1','mu-r2','mu-r3']));
+guard('misiOperasiFinish',()=>requireReflection(['mo-r1','mo-r2','mo-r3','mo-r4']));
+guard('sifatFinish',()=>{
+ if(requireReflection(['s4-komut','s4-asos','s4-distrib','s4-ekuivalen','s4-refleksi'])===false)return false;
+ showToast('Refleksi terisi; pembahasan uraian perlu ditinjau guru.');
+});
+// Pemodelan: uraian dikumpulkan untuk tinjauan, bukan dianggap benar.
+const oldPemodelanFinish=pemodelanFinish;
+pemodelanFinish=function(id){oldPemodelanFinish(id);const fb=document.getElementById('pm-fb-'+id);if(fb.classList.contains('ok')){fb.textContent='Jawaban terkumpul — perlu ditinjau guru. Status ini bukan nilai benar–salah.';document.getElementById('pm-done-'+id).textContent='Diskusikan model, langkah perhitungan, dan makna hasil bersama guru.';}};
+/* Parser polinomial terbatas, tanpa eval; menerima kurung dan perkalian implisit. */
+canonicalAlg=function(input){try{
+ const s=String(input??'').toLowerCase().replace(/\s/g,'').replace(/−/g,'-').replace(/[×·]/g,'*').replace(/²/g,'^2').replace(/:/g,'/');
+ if(!s||s.length>200)return null;
+ const ts=s.match(/\d+(?:\.\d+)?|[a-z]|[()+*/^\-]/g)||[];if(ts.join('')!==s)return null;let pos=0;
+ const add=(a,b,k=1)=>{const r={...a};for(const m in b)r[m]=(r[m]||0)+k*b[m];return r;};
+ const mul=(a,b)=>{const r={};for(const x in a)for(const y in b){const k=(x+y).split('').sort().join('');if(k.length>6)throw 0;r[k]=(r[k]||0)+a[x]*b[y];}return r;};
+ function atom(){let p;const t=ts[pos++];if(t==='+')return atom();if(t==='-')return mul({'':-1},atom());if(t==='('){p=expr();if(ts[pos++]!==')')throw 0;}else if(/^[a-z]$/.test(t||''))p={[t]:1};else if(/^\d/.test(t||''))p={'':Number(t)};else throw 0;
+ if(ts[pos]==='^'){pos++;const n=Number(ts[pos++]);if(!Number.isInteger(n)||n<0||n>6)throw 0;let q={'':1};for(let i=0;i<n;i++)q=mul(q,p);p=q;}return p;}
+ function term(){let p=atom();while(pos<ts.length){const t=ts[pos];if(t==='*'){pos++;p=mul(p,atom());}else if(t==='/'){pos++;const q=atom();if(Object.keys(q).some(k=>k!==''&&q[k]!==0)||!q[''])throw 0;p=mul(p,{'':1/q['']});}else if(t==='('||/^[a-z0-9]/.test(t)){p=mul(p,atom());}else break;}return p;}
+ function expr(){let p=term();while(ts[pos]==='+'||ts[pos]==='-'){const k=ts[pos++]==='+'?1:-1;p=add(p,term(),k);}return p;}
+ const p=expr();if(pos!==ts.length)return null;return Object.keys(p).filter(k=>Math.abs(p[k])>1e-10).sort().map(k=>k+':'+Number(p[k].toFixed(10))).join('|')||'0';
+ }catch(e){return null;}};
+const MODEL_KEYS={p1:['3x+7','x = poin plastik Kelompok Melati'],p2:['4x+10','x = bibit buah setiap kelompok'],p3:['3x+12','x = liter air mengepel satu kelas sebelum program'],p4:['x+3','x = jumlah pot dalam satu kelompok pot'],p5:['3x+6','x = jumlah kemasan dalam satu kelompok; hasil = rata-rata kontribusi satu kelas selama dua hari'],p6:['x+2y+5','x = banyak pot kecil; y = banyak pot besar; hasil dalam liter'],p7:['6x+4y','x = liter per bagian untuk tanaman; y = liter per bagian untuk kelas']};
+const renderPm=pagePemodelan;
+pagePemodelan=function(sub){let html=renderPm(sub);if(MODEL_KEYS[sub])html=html.replace('<div class="feedback" id="pm-fb-',`<label class="field-label">Pemeriksaan hasil akhir (${MODEL_KEYS[sub][1]}). Gunakan variabel ini untuk pemeriksaan otomatis; uraian di atas boleh memakai variabel lain.</label><input id="pm-final-${sub}" type="text" placeholder="Tuliskan model hasil akhir">${sub==='p7'?'<label class="field-label">Hasil substitusi x = 10, y = 5 (liter)</label><input id="pm-number-p7" type="number">':''}<div class="feedback" id="pm-fb-`);return html;};
+guard('pemodelanFinish',id=>algEquals(val('pm-final-'+id),MODEL_KEYS[id][0])&&(id!=='p7'||val('pm-number-p7')==='80')||fail('pm-fb-'+id,'Model hasil akhir belum tepat. Periksa suku sejenis, informasi pengurangan, serta pembagian yang diminta.'));
+const finishPm=pemodelanFinish;pemodelanFinish=function(id){finishPm(id);const fb=document.getElementById('pm-fb-'+id);if(fb.classList.contains('ok'))fb.textContent='Hasil akhir benar. Uraian langkah dan penafsiran perlu ditinjau guru.';};
+// Pisahkan pengisian refleksi dari klaim kebenaran konsep.
+const sf=sifatFinish;sifatFinish=function(){if(requireReflection(['s4-komut','s4-asos','s4-distrib','s4-ekuivalen','s4-refleksi'])===false)return;sf();const done=document.getElementById('s4-done');if(done)done.insertAdjacentHTML('beforeend','<p>Uraian kesimpulan dan refleksi perlu ditinjau guru.</p>');};
+
+/* Aktivitas dari enam halaman Desain tanpa judul.pdf. */
+const PDF_ASSET='assets/sifat-aljabar/';
+function pdfAsset(name){return PDF_ASSET+name;}
+const PDF_TITLES=['Komutatif','Komutatif','Asosiatif','Asosiatif','Distributif','Distributif'];
+function pageSifatMenu(){return `${misiHeader({title:'Sifat Aljabar',badge:'',sub:'Pilih misi sifat aljabar.',breadcrumbLast:'Sifat Aljabar'})}<section class="section"><div class="wrap"><div class="sifat-menu">${[1,3,5].map(n=>`<button class="sifat-option" onclick="go('sifat-pdf','${n}')"><img src="${pdfAsset('halaman-'+n+'.png')}" alt=""><span>Sifat ${PDF_TITLES[n-1]}</span></button>`).join('')}<button class="sifat-option" onclick="go('misi-sifat','1')"><span>Kotak Pilah Sampah Mini</span><span>Isi sifat aljabar sebelumnya</span></button></div></div></section>`;}
+function pageRespons(){const url=window.ALJABAR_CINTA_CONFIG?.googleFormUrl||'';let ready=false;try{const u=new URL(url);ready=u.protocol==='https:'&&(u.hostname==='forms.gle'||u.hostname==='docs.google.com');}catch(e){}
+ return `<section class="section"><div class="wrap"><h1>Respons Siswa</h1><div class="card"><p>Sampaikan tanggapanmu setelah menggunakan Aljabar Cinta.</p>${ready?'<button class="btn btn-primary" onclick="window.open(window.ALJABAR_CINTA_CONFIG.googleFormUrl,\'_blank\',\'noopener,noreferrer\')">Isi Google Form</button>':'<p>Formulir respons siswa belum tersedia.</p>'}</div><button class="btn btn-outline" onclick="go('beranda')">Kembali ke Beranda</button></div></section>`;}
+const PDF_FIELDS={
+1:[['situasi',223,752,520,70,'Apakah kedua cara menghasilkan jumlah botol yang sama? Jelaskan alasanmu.','area'],['amati',55,1356,665,44,'Apa yang terjadi pada jumlah seluruh botol setelah posisi ditukar?','area']],
+2:[['cara1',230,622,238,42,'Cara 1: total bibit'],['cara2',492,622,238,42,'Cara 2: total bibit'],['f1',126,1363,129,33,'Tukar urutan 3p + 5q'],['f2',385,1363,120,33,'Tukar urutan 7 + 2a + 6b'],['f3',594,1363,138,33,'Tukar urutan 4m + 9']],
+3:[['situasi',223,735,523,72,'Apakah kedua cara menghasilkan jumlah yang sama? Apa yang berbeda?','area']],
+4:[['cara1',230,584,240,53,'Cara pengelompokan 1'],['cara2',493,584,237,53,'Cara pengelompokan 2'],['bibit1',40,986,192,39,'Pengelompokan bibit 1'],['bibit2',40,1026,192,39,'Pengelompokan bibit 2'],['buku1',272,986,192,39,'Pengelompokan buku 1'],['buku2',272,1026,192,39,'Pengelompokan buku 2'],['peserta1',509,986,192,39,'Pengelompokan peserta 1'],['peserta2',509,1026,192,39,'Pengelompokan peserta 2'],['f1',141,1357,113,38,'Kelompokkan kembali (2a + 3a) + 5'],['f2',385,1357,114,38,'Kelompokkan kembali 4 + (3b + 2)'],['f3',607,1357,131,38,'Kelompokkan kembali (5x + 7) + 3x']],
+5:[['situasi',226,742,508,79,'Bagaimana mengetahui seluruh isi empat kantong?','area'],['singkat',51,1325,668,52,'Tuliskan bentuk lebih singkat']],
+6:[['cara1',218,554,242,44,'Cara 1: bentuk kelompok'],['cara2',486,554,242,44,'Cara 2: setelah dikelompokkan'],['kasus1a',39,970,195,40,'3 kelompok: bentuk kelompok'],['kasus1b',39,1042,195,38,'3 kelompok: setelah distribusi'],['kasus2a',282,970,195,40,'6 kotak: bentuk kelompok'],['kasus2b',282,1042,195,38,'6 kotak: setelah distribusi'],['kasus3a',524,970,195,40,'4 wadah: bentuk kelompok'],['kasus3b',524,1042,195,38,'4 wadah: setelah distribusi'],['f1',148,1338,136,33,'Sederhanakan 4(p + 2)'],['f2',180,1376,128,31,'Sederhanakan 5(a + 3b)'],['f3',519,1338,163,33,'Sederhanakan 2(3x + 4)'],['f4',570,1376,150,31,'Sederhanakan 5(b + 2) + 3b']]
+};
+function pdfBox(x,y,w,h){return `left:${x}px;top:${y}px;width:${w}px;height:${h}px;`;}
+function pdfButton(x,y,w,h,label,action,solid=false){return `<button class="pdf-hit ${solid?'pdf-solid':''}" style="${pdfBox(x,y,w,h)}" aria-label="${label}" title="${label}" onclick="${action}">${label}</button>`;}
+function pdfCard(id,name,x,y,w,h){return `<button class="pdf-card" id="${id}" draggable="true" style="${pdfBox(x,y,w,h)}" aria-label="${name}" onclick="pdfSelect('${id}')" ondragstart="pdfDrag(event,'${id}')" ondragover="event.preventDefault()" ondrop="pdfDrop(event,'swap')"><img src="${pdfAsset(name+'.png')}" alt="${name.replaceAll('-',' ')}"></button>`;}
+let pdfSelected='';
+function pdfDrag(e,id){pdfSelected=id;e.dataTransfer.setData('text/plain',id);}
+function pdfSelect(id){pdfSelected=id;pdfStatus('Kotak dipilih. Pilih tempat tujuan atau gunakan tombol Tukar posisi.');}
+function pdfDrop(e,target){e.preventDefault();const id=e.dataTransfer?.getData('text/plain')||pdfSelected;if(!id)return;if(target==='jumlah'&&id.startsWith('kom-')){const state=pdfState();state.collected=[...new Set([...(state.collected||[]),id])];pdfSaveState(state);pdfPaint();}else if(target.startsWith('asos-')&&id.startsWith('asos-card-')){const state=pdfState();const group=target==='asos-kiri'?'left':'right';state[group]=[...new Set([...(state[group]||[]),id])];pdfSaveState(state);pdfPaint();}else if(target==='swap'&&id.startsWith('kom-'))pdfSwap();}
+function pdfState(){return answers[routeKey()]?.__manip||{};}
+function pdfSaveState(state){(answers[routeKey()]||={}).__manip=state;persistAnswers();}
+function pdfStatus(message){const el=document.getElementById('pdf-status');if(el)el.textContent=message;showToast(message);}
+function pdfSwap(){const st=pdfState();st.swapped=!st.swapped;pdfSaveState(st);pdfPaint();}
+function pdfReset(){pdfSaveState({});pdfPaint();pdfStatus('Posisi awal dipulihkan.');}
+function pdfPaint(){const st=pdfState();const k=document.getElementById('kom-kantin'),l=document.getElementById('kom-lapangan');if(k&&l){k.style.left=(st.swapped?267:54)+'px';l.style.left=(st.swapped?54:267)+'px';const total=document.getElementById('pdf-total');const got=st.collected||[];total.textContent=got.length===2?'4 + 3 = 3 + 4 = 7 botol':got.length===1?(got[0]==='kom-kantin'?'4 botol':'3 botol'):'Jumlah seluruh botol';}
+ for(const [key,target] of [['left','asos-kiri'],['right','asos-kanan']]){const box=document.getElementById(target);if(!box)continue;const got=st[key]||[];const expected=key==='left'?['asos-card-kantin','asos-card-taman']:['asos-card-taman','asos-card-lapangan'];const valid=got.length===2&&expected.every(v=>got.includes(v));box.innerHTML=got.map(id=>`<img src="${pdfAsset('asosiatif-'+id.split('-').pop()+'.png')}" alt="${id.split('-').pop()}">`).join('')+(valid?'<span>2 + 2 = 4; seluruhnya 6</span>':got.length?'Pilih dua sumber sesuai petunjuk.':'');}
+}
+function pageSifatPDF(page){const n=Math.max(1,Math.min(6,page));let h=`<div class="wrap" style="padding-top:20px"><button class="btn btn-outline btn-sm" onclick="go('misi-sifat')">← Menu Sifat Aljabar</button><p>Halaman ${n} dari 6 · Sifat ${PDF_TITLES[n-1]}</p></div><div class="pdf-scroll"><div class="pdf-sheet" style="--pdf-color:${n<3?'#188c47':n<5?'#006ab7':'#ff5e0a'}"><img src="${pdfAsset('halaman-'+n+'.png')}" alt="Halaman ${n}: Sifat ${PDF_TITLES[n-1]}, situasi lingkungan, model, dan penerapan dari PDF">`;
+ for(const [id,x,y,w,hh,label,type] of PDF_FIELDS[n]){h+=type==='area'?`<textarea class="pdf-field" id="pdf-${n}-${id}" style="${pdfBox(x,y,w,hh)}" aria-label="${label}" placeholder="Tulis jawabanmu di sini ..."></textarea>`:`<input class="pdf-field" id="pdf-${n}-${id}" style="${pdfBox(x,y,w,hh)}" aria-label="${label}" placeholder="Tulis di sini ..." autocomplete="off">`;}
+ if(n===1){h+=pdfButton(635,834,115,39,'Lanjut',"pdfSituation(1)");h+=pdfCard('kom-kantin','komutatif-kantin',54,1063,168,145)+pdfCard('kom-lapangan','komutatif-lapangan',267,1063,167,145);h+=`<button id="pdf-total" class="pdf-drop" style="${pdfBox(515,1064,210,143)}" ondragover="event.preventDefault()" ondrop="pdfDrop(event,'jumlah')" onclick="pdfDrop(event,'jumlah')" aria-label="Gabungkan botol di sini">Jumlah seluruh botol</button><div style="position:absolute;${pdfBox(36,1040,420,180)}pointer-events:none" ></div>`;h+=pdfButton(232,1228,156,45,'Tukar posisi','pdfSwap()',false)+pdfButton(409,1228,130,45,'Reset','pdfReset()');}
+ if(n===3){h+=pdfButton(639,820,117,43,'Lanjut','pdfSituation(3)');for(const [name,x] of [['kantin',171],['taman',335],['lapangan',499]])h+=pdfCard('asos-card-'+name,'asosiatif-'+name,x,1024,114,114);for(const [id,x,y] of [['asos-kiri',45,1215],['asos-kanan',541,1215]])h+=`<button id="${id}" class="pdf-drop" style="${pdfBox(x,y,194,127)}" aria-label="${id==='asos-kiri'?'Kelompokkan kantin dan taman':'Kelompokkan taman dan lapangan'}" ondragover="event.preventDefault()" ondrop="pdfDrop(event,'${id}')" onclick="pdfDrop(event,'${id}')"></button>`;}
+ if(n===5)h+=pdfButton(629,836,116,43,'Lanjut','pdfSituation(5)');
+ if([2,4,6].includes(n))h+=pdfButton(n===6?592:612,n===2?675:n===4?648:612,n===2?130:n===4?126:144,43,'Cek Jawaban',`pdfCheckPair(${n})`);
+ const nextLabel=n===2?'Lanjut ke Asosiatif':n===4?'Lanjut ke Distributif':n===6?'Selesai':'Lanjut →';
+ h+=pdfButton(n===1?442:n===3?453:30,n===1?1428:n===2?1438:n===3?1425:n===4?1437:n===5?1426:1437,n===1?151:180,48,'← Sebelumnya',n===1?"go('misi-sifat')":`go('sifat-pdf','${n-1}')`,true);
+ h+=pdfButton(n===1?613:n===3?640:590,n===1?1429:n===2?1438:n===3?1426:n===4?1437:n===5?1426:1437,n===1?126:n===3?114:153,48,nextLabel,`pdfNext(${n})`,true);
+ return h+'</div></div><div class="pdf-status" id="pdf-status" role="status" aria-live="polite">Jawaban tersimpan pada browser ini. Uraian perlu ditinjau guru.</div>';}
+function pdfSituation(n){if(!val(`pdf-${n}-situasi`)){pdfStatus('Tuliskan jawaban situasi terlebih dahulu.');document.getElementById(`pdf-${n}-situasi`).focus();return;}pdfStatus('Jawaban situasi tersimpan untuk ditinjau guru. Lanjutkan aktivitas Model of 1.');document.querySelector('.pdf-sheet').parentElement.scrollIntoView();window.scrollBy(0,880);}
+function pdfClean(s){return s.toLowerCase().replace(/\s/g,'').replace(/[×·]/g,'*');}
+function pdfAddPair(a,b,assoc=false){a=pdfClean(a);b=pdfClean(b);if(!assoc){const x=a.match(/^([a-z])\+([a-z])$/),y=b.match(/^([a-z])\+([a-z])$/);return !!(x&&y&&x[1]!==x[2]&&x[1]===y[2]&&x[2]===y[1]);}
+ const l=/^\(([a-z])\+([a-z])\)\+([a-z])$/,r=/^([a-z])\+\(([a-z])\+([a-z])\)$/;const test=(x,y)=>{const m=x.match(l),k=y.match(r);return m&&k&&new Set(m.slice(1)).size===3&&m.slice(1).join('')===k.slice(1).join('');};return !!(test(a,b)||test(b,a));}
+function pdfDistribution(a,b,m,c){const vars=[...new Set((a+b).toLowerCase().match(/[a-z]/g)||[])];if(vars.length!==1)return false;const v=vars[0];return /\(/.test(a)&&!/[()]/.test(b)&&algEquals(a,`${m}(${v}+${c})`)&&algEquals(b,`${m}*${v}+${m*c}`);}
+function pdfCheckPair(n,quiet=false){let a=val(`pdf-${n}-cara1`),b=val(`pdf-${n}-cara2`);const ok=n===2?pdfAddPair(a,b):n===4?pdfAddPair(a,b,true):pdfDistribution(a,b,5,2);if(!quiet)pdfStatus(ok?'Kedua bentuk benar. Lanjutkan pola umum dan penerapan.':'Periksa kedua cara: gunakan simbol yang konsisten dan tunjukkan perubahan urutan, pengelompokan, atau distribusi sesuai sifatnya.');return ok;}
+function pdfReordered(s,terms){s=pdfClean(s);const got=s.split('+');return s!==terms.join('+')&&got.length===terms.length&&got.slice().sort().join('|')===terms.slice().sort().join('|');}
+function pdfNext(n){const missing=PDF_FIELDS[n].find(([id])=>!val(`pdf-${n}-${id}`));if(missing){pdfStatus('Lengkapi semua jawaban sebelum melanjutkan.');document.getElementById(`pdf-${n}-${missing[0]}`).focus();return false;}let ok=true;
+ if(n===1)ok=(pdfState().collected||[]).length===2;
+ if(n===2)ok=pdfCheckPair(n,true)&&[['3p','5q'],['7','2a','6b'],['4m','9']].every((t,i)=>pdfReordered(val(`pdf-2-f${i+1}`),t));
+ if(n===3){const st=pdfState();ok=['kantin','taman'].every(x=>(st.left||[]).includes('asos-card-'+x))&&(st.left||[]).length===2&&['taman','lapangan'].every(x=>(st.right||[]).includes('asos-card-'+x))&&(st.right||[]).length===2;}
+ if(n===4){ok=pdfCheckPair(n,true)&&['bibit','buku','peserta'].every(k=>pdfAddPair(val('pdf-4-'+k+'1'),val('pdf-4-'+k+'2'),true));const expected=['2a+(3a+5)','(4+3b)+2','5x+(7+3x)'],simple=['5a+5','3b+6','8x+7'];ok=ok&&expected.every((s,i)=>{const v=val(`pdf-4-f${i+1}`);return pdfClean(v)===pdfClean(s)||(!/[()]/.test(v)&&algEquals(v,simple[i]));});}
+ if(n===5){const a=val('pdf-5-singkat'),v=[...new Set(a.toLowerCase().match(/[a-z]/g)||[])];ok=v.length===1&&algEquals(a,`4(${v[0]}+3)`)&&/^4\s*\*?\s*\(/.test(a);}
+ if(n===6)ok=pdfCheckPair(n,true)&&[[3,4],[6,2],[4,3]].every(([m,c],i)=>pdfDistribution(val(`pdf-6-kasus${i+1}a`),val(`pdf-6-kasus${i+1}b`),m,c))&&['4p+8','5a+15b','6x+8','8b+10'].every((a,i)=>algEquals(val(`pdf-6-f${i+1}`),a)&&!/[()]/.test(val(`pdf-6-f${i+1}`)));
+ if(!ok){pdfStatus(n===1?'Gabungkan kedua kotak ke tempat jumlah seluruh botol. Kamu dapat menyeret atau memilih kotak lalu memilih tempat tujuan.':n===3?'Kelompokkan kantin dan taman di kotak kiri; taman dan lapangan di kotak kanan. Pilih kotak sumber lalu tempat tujuan. Gunakan Reset jika perlu.':'Jawaban belum tepat. Periksa semua bentuk dan pastikan sifat yang diminta terlihat pada jawaban.');return false;}
+ setMisiStep('sifat','pdf'+n,true);go(n===6?'misi-sifat':'sifat-pdf',n===6?undefined:String(n+1));return true;}
+const pdfAfter=afterRender;afterRender=function(page,sub){pdfAfter(page,sub);if(page==='sifat-pdf'){pdfPaint();if(Number(sub)===3){const status=document.getElementById('pdf-status');status.insertAdjacentHTML('afterend','<div class="wrap"><button class="btn btn-outline" onclick="pdfReset()">Reset pengelompokan</button></div>');}}};
 
 /* init */
 render();
