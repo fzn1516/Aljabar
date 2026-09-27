@@ -1,2 +1,2 @@
 // Isi dengan tautan Google Form milik Anda, misalnya https://forms.gle/...
-window.ALJABAR_CINTA_CONFIG = { googleFormUrl: "" };
+window.ALJABAR_CINTA_CONFIG = { googleFormUrl: "https://docs.google.com/forms/d/e/1FAIpQLScwVCBniRgV-6I0Y11BIU3t6eLDyQ7F7gkhRlg0Ptq-TCGctg/viewform" };
